@@ -1,0 +1,78 @@
+Sommario
+
+Studiare il ruolo che la tecnologia GraphQL può avere nella metodologia di sviluppo Model-Driven (Model-First).
+Analizzare un prototipo sviluppato con questa tecnologia e realizzare un generatore di codice, basato su graphql-code-generator per i principali ORM su tecnologia NodeJS.
+
+Inizia con il parlare di model driven programming -> https://www.researchgate.net/publication/221249899_Model-Driven_Development_Its_Essence_and_Opportunities
+-> https://amslaurea.unibo.it/20886/1/tesi.pdf
+
+Gli ultimi anni hanno visto una maturazione dello standard[1 -> link a standard] GraphQL, dei servizi costruiti per implementarlo e la sua adozione da parte di numerose aziende. [2 -> https://graphql.org/users/]
+Definito per la prima volta internamente a Facebook nel 2012, oggi si presenta come uno standard capace di competere con l'architettura di tipo REST per il dialogo fra client e server.
+Caratterista fondamentale di GraphQL è lo schema che definisce le possibili operazioni di lettura, scrittura o modifica di entità che il client può eseguire in maniera personalizzata e mirata.
+Le entità sono definite da campi tipizzati e relazioni con altre entità, la struttura del dominio delle interrogazioni gestibili dal server è strutturata come un grafo.
+//NO: Grazie a questo schema, i client possono effettuare interrogazioni mirate, evitando di usare numerose chiamate ai server e di incorrere in problemi di under o over-fetching, come nel caso di soluzioni RESTful.
+
+Le possibilità offerte dallo standard però non si limitano alla comunicazione fra client e server: essendo i campi delle entità tipizzati, ed avendo lo standard un concetto di reflection, è possibile usare 
+schemi GraphQL anche per definire lo strato del model.
+Questa possibilità rende quindi l'impiego di questo standard potenzialmente adatto per lo sviluppo Model Driven, potendo generare in modo automatizzato il codice applicativo che si occuperà di interfacciarsi con le strutture dallo schema GraphQL.
+
+Sfruttare quest'ultima prospettiva è ciò a cui mira l'attività descritta in questo documento: Twinlogix, azienda del Riminese, ha infatti da un po' di tempo iniziato a sfruttare le potenzialità del linguaggio di GraphQL per scrivere dei nuovi generatori
+di codice per gestire la creazione di parti di software comunicanti con database.
+In particolare, il lavoro qui discusso consiste nello studio di una serie di tecnologie, librerie e del prototipo di generatore sviluppato dall'azienda per database MongoDB, per poi scrivere una versione base che possa gestire l'interazione con database SQL.
+
+
+Introduzione
+
+    GraphQL
+        Ideato da Facebook nel 2012, il linguaggio GraphQL è stato successivamente (nel ?) pubblicato in maniera open source e, dal 2018, è gestito dalla Linux Foundation (moar) come standard.
+        Nasce con il duplice scopo di modellare entità collegate fra di loro da relazioni e di fornire una soluzione a noti problemi dell'approccio RESTful, architettura per la comunicazione client server prevalente nello sviluppo in ambito web.
+        Il linguaggio di GraphQL permette di definire uno schema costituito da un punto di ingresso, il nodo root, e uno o più tipi.
+        
+        Questi tipi possono rappresentare: (elenco puntato più espanso) tipi di dato, con i loro rispettivi campi, oppure "richieste" o "mutazioni", operazioni di lettura e scrittura che il server mette a disposizione.
+            /Immagine
+        
+        Ogni tipo al suo interno piò contenere uno o più scalari, ovvero valori foglie, e uno o più altri oggetti complessi: in questo modo vengono definite le relazioni fra le varie entità.
+
+        Quando un client contatta un server GraphQL, può fornire come parametri di richiesta operazioni di query o mutazione definita nello schema definenendo, specificandone i vari campi, quale forma avrà il risultato restituito dall'operazione.
+
+        Le immagini successive mostrano un esempio di comunicazione con un server GraphQL in contrasto ad uno con uno utilizzante l'API REST
+        https://www.howtographql.com/basics/1-graphql-is-the-better-rest/
+
+
+        Si nota quindi che l'utilizzo di GraphQL permette di risolvere due grandi problemi dell'approccio REST:
+            -Overfetching underfetching "This happens because the only way for a client to download data is by hitting endpoints that return fixed data structures"
+            -Inoltre, essendo specificato solo un punto d'ingresso nello schema (il nodo root), questo diventa anche l'unico endpoint che un clint dovrà contattare, evitando di dover inviare più richieste per accedere a dati associati. 
+        
+        Necessità di modifcare backend in caso di cambiamenti a frontend
+        Il fatto che lo schema indichi campi tipizzati rende pure molto più semplice la comprensione delle risposte da parte del server
+
+        GraphQL comprende il concetto di reflection!
+
+
+    
+    MDD -> come sfruttarla? codegen!
+        Nascita
+        Funzionamento
+
+
+    Graphql-codegen -> visitor pattern, finisci con l'accennare ai plugin (predefiniti e custom) e al fatto che il gen aziendale usi il dao pattern
+                        prima di generare il codice, è necessario definitire come saranno strutturati ed inizializzati i dao!
+        visitor pattern,
+        plugins
+
+    DAO Pattern -> è generico, ma dipende da databases ()
+    
+    DB documentali vs Relazionali
+    
+    ORM (Interazione con databases)
+        Per interagire con DBs ci sono più opzioni (principalmente due: utilizzare direttamente il driver DB oppure un ORM? https://blog.logrocket.com/why-you-should-avoid-orms-with-examples-in-node-js-e0baab73fa5/#isormreallynecessary) 
+
+    Sequelize
+        modelli
+        associazioni
+
+    Risoluzione differenze fra db relazionali e documentali
+
+    Applicazione visitor pattern per generazione codice(?)
+
+
