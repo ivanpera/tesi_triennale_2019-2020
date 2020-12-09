@@ -17,7 +17,7 @@ schemi GraphQL anche per definire lo strato del model.
 Questa possibilità rende quindi l'impiego di questo standard potenzialmente adatto per lo sviluppo Model Driven, potendo generare in modo automatizzato il codice applicativo che si occuperà di interfacciarsi con le strutture dallo schema GraphQL.
 
 Sfruttare quest'ultima prospettiva è ciò a cui mira l'attività descritta in questo documento: Twinlogix, azienda del Riminese, ha infatti da un po' di tempo iniziato a sfruttare le potenzialità del linguaggio di GraphQL per scrivere dei nuovi generatori
-di codice per gestire la creazione di parti di software comunicanti con database.
+di codice per automatizzare la creazione di parti di software adibite alla gestione delle comunicazioni con database.
 In particolare, il lavoro qui discusso consiste nello studio di una serie di tecnologie, librerie e del prototipo di generatore sviluppato dall'azienda per database MongoDB, per poi scrivere una versione base che possa gestire l'interazione con database SQL.
 
 
@@ -28,7 +28,7 @@ Introduzione
         Nasce con il duplice scopo di modellare entità collegate fra di loro da relazioni e di fornire una soluzione a noti problemi dell'approccio RESTful, architettura per la comunicazione client server prevalente nello sviluppo in ambito web.
         Il linguaggio di GraphQL permette di definire uno schema costituito da un punto di ingresso, il nodo root, e uno o più tipi.
         
-        Questi tipi possono rappresentare: (elenco puntato più espanso) tipi di dato, con i loro rispettivi campi, oppure "richieste" o "mutazioni", operazioni di lettura e scrittura che il server mette a disposizione.
+        Questi tipi possono rappresentare: (elenco puntato più espanso) tipi di dato, con i loro rispettivi campi, "richieste", "mutazioni", enum etc..,  //operazioni di lettura e scrittura che il server mette a disposizione.
             /Immagine
         
         Ogni tipo al suo interno piò contenere uno o più scalari, ovvero valori foglie, e uno o più altri oggetti complessi: in questo modo vengono definite le relazioni fra le varie entità.
@@ -44,23 +44,42 @@ Introduzione
             -Inoltre, essendo specificato solo un punto d'ingresso nello schema (il nodo root), questo diventa anche l'unico endpoint che un clint dovrà contattare, evitando di dover inviare più richieste per accedere a dati associati. 
         
         Necessità di modifcare backend in caso di cambiamenti a frontend
-        Il fatto che lo schema indichi campi tipizzati rende pure molto più semplice la comprensione delle risposte da parte del server
+        Il fatto che lo schema indichi campi tipizzati rende pure molto più semplice la comprensione delle risposte da parte del server.
 
-        GraphQL comprende il concetto di reflection!
+        Essendo uno standard, GraphQL non è legato ad implementazioni o tecnologie. Lavorando in ambito NodeJS, in questo elaborato verrrà utilizzato Apollo Server[link].
+
+        GraphQL comprende il concetto di reflection! (espandi)
 
 
     
-    MDD -> come sfruttarla? codegen!
-        Nascita
-        Funzionamento
+    MDD
+        Lo sviluppo "Model Driven" è un'approccio all'ingegneria del software orientato alla definizione di modelli piuttosto che di software.
+        Parlare di modelli permette di astrarre la complessità del software, rendendo più chiara la visione dell'interazione fra le varie componenti dell'applicazione.
+        L'approccio Model Driven è particolarmente efficace quando i suddetti modelli descrivono strutture che si prestano alla generazione automatizzata di codice: così facendo si permette di produrre applicazioni in modo molto più rapido, limitandosi a personalizzare
+        i modelli per poi farli generare.
+        Questo approccio aiuta anche a prevenire l'errore umano: spesso infatti le componenti modellabili e generabili automaticamente presentano strutture complesse, lunghe e difficili da scrivere e gestire personalmente dai programmatori.
+        Il processo di scrittura, ma anche di aggiornamento, viene quindi privato di errori accidentali, difficili da localizzare, spostando tutta la complessità sui software di generazione del codice.
+
+        GraphQL può essere usato come linguaggio per definire modelli: sono infatti già disponibili servizi di generazione di codice basata su schemi GraphQL.
+        Quello utilizzato in questo caso è "GraphQL-code-generator" [link].
 
 
-    Graphql-codegen -> visitor pattern, finisci con l'accennare ai plugin (predefiniti e custom) e al fatto che il gen aziendale usi il dao pattern
-                        prima di generare il codice, è necessario definitire come saranno strutturati ed inizializzati i dao!
-        visitor pattern,
-        plugins
+    Graphql code generator
+        GraphQL code generator è un tool CLI open source, rilasciato nel XXXX da YYYY, in grado di analizzare uno schema GraphQL e, tramite plugins, generare codice.
+        Il modo in cui questo strumento opera è utilizzando il pattern di programmazione "visitor".
+        Il pattern visitor è una soluzione al problema che si verifica quando bisogna effettuare operazioni su una struttura di oggetti senza però aggiungere funzionalità agli stessi:
+        ogni oggetto della struttura implementa un'interfaccia che definisce un metodo "accept" che riceve come parametro un'implementazione dell'interfaccia Visitor.
+        L'interfaccia Visitor specifica invece un metodo "visit" per ogni tipologia (ad esempio, ogni classe) di oggetto sul quale svolgere operazioni.
+        Nell'applicazione principale poi, per ogni oggetto, viene chiamato il metodo accept passando ogni implementazione di Visitor, cosicchè per aggiungere operazioni/trasformazioni delle classi è possibile semplicemente implementare un nuovo Visitor.
+        È questo il meccanismo alla base di GraphQL code generator: il programma naviga lo schema GraphQL e, ogni volta che individua tipi, interfacce, enum etc... chiama il metodo di gestione appropriato per ogni plugin (che svolge il compito di Visitor) indicato nel file di configurazione.
+        Sono disponibili dei plugin predefiniti, fra cui quello, usato durante questo progetto, per generare tipi, interfacce etc... in linguaggio TypeScript.
+        La parte di elaborato dedicata alla scrittura del generatore di codice consisterà dunque nell'impletare un plugin personalizzato compatibile con GraphQl code generator.
+        I lavori saranno svolti sulla base di un plugin scritto internamente all'azienda, dedicato alla generazione di schemi e metodi per eseguire operazioni su un database MongoDB.
+        Il codice generato dai plugin aziendali sarà basato su una struttura astratta aderente al pattern Data Access Object (DAO).
 
     DAO Pattern -> è generico, ma dipende da databases ()
+        
+
     
     DB documentali vs Relazionali
     
