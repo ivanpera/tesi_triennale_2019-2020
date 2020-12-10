@@ -78,19 +78,37 @@ Introduzione
         Il codice generato dai plugin aziendali sarà basato su una struttura astratta aderente al pattern Data Access Object (DAO).
 
     DAO Pattern -> è generico, ma dipende da databases ()
+        Il pattern DAO è una strategia impiegata per separare lo strato funzionale di un'applicazione da quello di persistenza dei dati: permette quindi di sviluppare il lato applicativo senza avere conoscenza di come i dati vengano effettivamente gestiti, così come poter modificare la gestione dei dati
+        senza dover effettuare modifiche al lato applicativo, a patto che le interfacce rimangano inalterate.
+        Il pattern prevede la definizione di un'interfaccia di alto livello che definisce i metodi di lettura e scrittura su un particolare tipo di oggetto, l'implementazione di questa e dell'oggetto, detto "Data Transfer Object", che non è altro che un'entità sulla quale mappare i dati custoditi nel DataBase.
         
+        [immagini]
+
+        Dovendo però scrivere dei dao per oggetti che verranno generati in futuro, l'implementazione aziendale del pattern punta a definire un generico DAO adatto a qualsiasi tipo di DTO, con metodi quindi non personalizzati in base ad esso.
+        La struttura del dao è quindi composta da una serie di interfacce che definiscono dao di scrittura e lettura generici (di un generico tipo DTO) con operazioni che prendono come parametri filtri e opzioni che verranno poi generati dal generatore in base al tipo del DTO.
+        [Immagini?]
+        
+        Viene anche definito un meccanismo di associazioni tra dao indipendente dal database sottostande, così da poter implementare associazioni fra i vari tipi dello schema graphql.
+
+        [esempio + immagine di associazione in uno schema?]
+
+        Infine, è definito un DAO astratto che implementa le operazioni descritte nelle interfacce tramite metodi template.
+        La comunicazione con lo strato di persistenza è delegata a implementazioni della classe DAO astratta.
+
+        Come scritto in precedenza, l'azienda aveva già scritto un prototipo di implementazione per comunicazione con dabase MongoDB; l'attività sul fronte di scrittura di un'implementazione del DAO quindi è consistita nella scrittura di una versione capace di interfacciarsi con database SQL, sfruttando la libreria ORM "Sequelize".
 
     
-    DB documentali vs Relazionali
-    
+       
     ORM (Interazione con databases)
         Per interagire con DBs ci sono più opzioni (principalmente due: utilizzare direttamente il driver DB oppure un ORM? https://blog.logrocket.com/why-you-should-avoid-orms-with-examples-in-node-js-e0baab73fa5/#isormreallynecessary) 
-
-    Sequelize
+        
+        Sequelize
         modelli
         associazioni
-
+        
     Risoluzione differenze fra db relazionali e documentali
+    
+    DB documentali vs Relazionali
 
     Applicazione visitor pattern per generazione codice(?)
 
