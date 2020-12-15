@@ -1,16 +1,16 @@
 Sommario
 
-Studiare il ruolo che la tecnologia GraphQL può avere nella metodologia di sviluppo Model-Driven (Model-First).
-Analizzare un prototipo sviluppato con questa tecnologia e realizzare un generatore di codice, basato su graphql-code-generator per i principali ORM su tecnologia NodeJS.
+% Studiare il ruolo che la tecnologia GraphQL può avere nella metodologia di sviluppo Model-Driven (Model-First).
+% Analizzare un prototipo sviluppato con questa tecnologia e realizzare un generatore di codice, basato su graphql-code-generator per i principali ORM su tecnologia NodeJS.
 
-Inizia con il parlare di model driven programming -> https://www.researchgate.net/publication/221249899_Model-Driven_Development_Its_Essence_and_Opportunities
--> https://amslaurea.unibo.it/20886/1/tesi.pdf
+% Inizia con il parlare di model driven programming -> https://www.researchgate.net/publication/221249899_Model-Driven_Development_Its_Essence_and_Opportunities
+% -> https://amslaurea.unibo.it/20886/1/tesi.pdf
 
 Gli ultimi anni hanno visto una maturazione dello standard[1 -> link a standard] GraphQL, dei servizi costruiti per implementarlo e la sua adozione da parte di numerose aziende. [2 -> https://graphql.org/users/]
 Definito per la prima volta internamente a Facebook nel 2012, oggi si presenta come uno standard capace di competere con l'architettura di tipo REST per il dialogo fra client e server.
 Caratterista fondamentale di GraphQL è lo schema che definisce le possibili operazioni di lettura, scrittura o modifica di entità che il client può eseguire in maniera personalizzata e mirata.
 Le entità sono definite da campi tipizzati e relazioni con altre entità, la struttura del dominio delle interrogazioni gestibili dal server è strutturata come un grafo.
-//NO: Grazie a questo schema, i client possono effettuare interrogazioni mirate, evitando di usare numerose chiamate ai server e di incorrere in problemi di under o over-fetching, come nel caso di soluzioni RESTful.
+% //NO: Grazie a questo schema, i client possono effettuare interrogazioni mirate, evitando di usare numerose chiamate ai server e di incorrere in problemi di under o over-fetching, come nel caso di soluzioni RESTful.
 
 Le possibilità offerte dallo standard però non si limitano alla comunicazione fra client e server: essendo i campi delle entità tipizzati, ed avendo lo standard un concetto di reflection, è possibile usare 
 schemi GraphQL anche per definire lo strato del model.
@@ -77,7 +77,7 @@ Introduzione
         I lavori saranno svolti sulla base di un plugin scritto internamente all'azienda, dedicato alla generazione di schemi e metodi per eseguire operazioni su un database MongoDB.
         Il codice generato dai plugin aziendali sarà basato su una struttura astratta aderente al pattern Data Access Object (DAO).
 
-    DAO Pattern -> è generico, ma dipende da databases ()
+    DAO Pattern
         Il pattern DAO è una strategia impiegata per separare lo strato funzionale di un'applicazione da quello di persistenza dei dati: permette quindi di sviluppare il lato applicativo senza avere conoscenza di come i dati vengano effettivamente gestiti, così come poter modificare la gestione dei dati
         senza dover effettuare modifiche al lato applicativo, a patto che le interfacce rimangano inalterate.
         Il pattern prevede la definizione di un'interfaccia di alto livello che definisce i metodi di lettura e scrittura su un particolare tipo di oggetto, l'implementazione di questa e dell'oggetto, detto "Data Transfer Object", che non è altro che un'entità sulla quale mappare i dati custoditi nel DataBase.
@@ -98,18 +98,53 @@ Introduzione
         Come scritto in precedenza, l'azienda aveva già scritto un prototipo di implementazione per comunicazione con dabase MongoDB, pertanto i lavori di scrittura di una versione capace di interfacciarsi con database SQL sono partiti studiando questa.
         Di accordo con l'azienda, la versione SQL è stata scritta sfruttando la libreria ORM "Sequelize" per l'interazione con la base di dati.
     
-       
-    ORM (Interazione con databases)
-        Per interagire con DBs ci sono più opzioni (principalmente due: utilizzare direttamente il driver DB oppure un ORM? https://blog.logrocket.com/why-you-should-avoid-orms-with-examples-in-node-js-e0baab73fa5/#isormreallynecessary) 
-        
+    ORM
+        L'Object Relational Mapping è una tecnica di programmazione creata per favorire l'interazione fra un'applicazione scritta con un approccio ad oggetti ed una base di dati di tipo relazionale, o comunque modellante tabelli tramite campi scalari semplici.
+        Una libreria ORM, infatti, rende possibile mappare le tabelle a degli oggetti e viceversa, permettendo pertanto di poter operare con questi dentro l'applicazione anche quando si deve comunicare con un DB.
+        [Esempi?
+            -inserimento oggetti in un DB
+            -fetch oggetti da un DB
+        ]
+
+        Gli immediati vantaggi di questo approccio sono il ridotto numero di linee di codice scritte, nonchè la semplicità nell'interazione con il DB.
+        Un altro importante vantaggio, prendendo ad esempio il caso di Sequelize, è il fatto di poter astrarre più facilmente anche l'implementazione del DataBase utilizzato e rendere più veloce la connesione con questo.
+        [
+            Esempi di connessione
+            Esempio di query tradotta in modo diverso fra un db e l'altro
+        ]
+
+        D'altro canto, utilizzare una libreria ORM ha anche numerosi svantaggi:
+            - E' una libreria complessa se la si vuole sfruttare a fondo
+            - Bisogna effettuare un setup
+            - Toglie del controllo al programmatore vista la grande astrazione che introduce
+            - Può produrre query subottimali
+
+        Questi svantaggi non sono però stati ritenuti abbastanza influenti da decidere di optare per una soluzione di più basso livello.
+        Verranno qui di seguito illustrati i meccanismi principali della libreria Sequelize.
         Sequelize
         modelli
         associazioni
-        
-    Risoluzione differenze fra db relazionali e documentali
     
-    DB documentali vs Relazionali
+    Analisi del prototipo
+        -descrizione prototipo DAO
 
-    Applicazione visitor pattern per generazione codice(?)
+    Obiettivi/Requisiti attività ?
+
+    Problematiche del progetto
+        Le problematiche maggiori della fase di implemetazione del DAO astratto sono scaturite dalle differenze fra database di tipo documentale (come MongoDB) e database SQL.
+        Gli schemi GraphQL utilizzati dall'azienda per eseguire test, e che sono stati presi come punto di riferimento per lo sviluppo dell'implementazione, presentano alcuni tipi difficilmente convertibili in maniera triviale, questo perchè gli schemi GraphQL sono
+        particolarmente adatti per definire modelli che si adattano bene a documenti.
+
+        I database documentali non sono basati su tabelle rigidamente definite, ma contengono al loro interno documenti, oggetti codificati in diversi standard (XML, JSON, YAML...), non strutturati e conservati in una singola istanza, piuttosto che essere potenzialmente distribuiti in più tabelle.
+        
+        [immagini con esempi di entrambi i db e didascalie]
+
+        Di seguito sono mostrati esempi di tipi dalla difficile mappatura
+        -struttura tipo di una type graphql difficilmente mappabile
+
+    Approccio alla risoluzione delle problematiche
+    
+
+    % Applicazione visitor pattern per generazione codice(?)
 
 
