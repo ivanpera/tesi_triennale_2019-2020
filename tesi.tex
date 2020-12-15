@@ -139,11 +139,38 @@ Introduzione
         
         [immagini con esempi di entrambi i db e didascalie]
 
-        Di seguito sono mostrati esempi di tipi dalla difficile mappatura
-        -struttura tipo di una type graphql difficilmente mappabile
+        Di seguito è mostrato un esempio di tipo dalla difficile mappatura:
+        [schema Person]
+        problemi da identificare:
+            -Al suo interno il tipo contiene un altro tipo: Address (questi tipi non rappresentano tabelle sulle quali effettuare richieste direttamente, ma sono tipi innestati nei tipi delle tabelle)
+            -Al suo interno il tipo contiene una interfaccia: Dog
+            -Al suo interno il tipo contiene degli array
 
-    Approccio alla risoluzione delle problematiche
-    
+        Questi problemi, eccetto quello dele interfaccie, sono non esistenti se alla base è usato un database documentale: i documenti possono infatti possedere campi di tipi composti e array nativamente. 
+        Il problema delle interfacce non verrà affrontato in questo documento.(?)
+
+    Approccio alla risoluzione delle problematiche (alto livello)
+        In un primo momento era stato ipotizzato di gestire i campi di tipi composti e gli array con delle associazioni, sfruttando il meccanismo di riferimenti già presente nel progetto dell'azienda (-> da descrivere prima).
+        Questo approccio avrebbe però portato a dover gestire una serie di complicazioni:
+            -Generazione manuale delle tabelle fittizie per gestire gli array di primitive
+            -Generazione manuale delle tabelle di giunzione per gestire le relazioni fra tipi
+            -Necessità di effettuare modifiche all'interfaccia delle associazioni, quindi dover modificare il dao comune
+            -Dipendenza di associazioni l'una dall'altra -> la cosa più grave *da discutere*
+            -altro...?
+        
+        Pertanto, sono stati invece evitati alcuni fra questi problemi usando le associazioni di Sequelize.
+        (nota: riferimenti = associazioni indicate su schema GraphQL
+               associazioni = associazioni Sequelize
+        )
+        Non usando il meccanismo di gestione delle associazioni si evita di dover effettuare cambiamenti all'interfaccia comune e non bisogna gestire dipendenze fra associazioni in quanto la risoluzione delle references dello schema verrà infatti eseguita solo dopo che Sequelize avrà raccolto tutti i dati della tabella e di quelle associate.
+        Oltre a questo, Sequelize gestisce in autonomia (o dietro configurazione esplicita) la creazione di foreign keys per collegare le tabelle fra di loro.
+
+        Il tipo precedentemente mostrato verrà quindi mappato con la seguente struttura di tabelle (viene ignorato il campo di tipo interfaccia)
+        [immagini varie]
+
+    Approccio alla risoluzione delle problematiche (livello implementativo)
+
+        -descrizione metodi principali del dao, snippets...
 
     % Applicazione visitor pattern per generazione codice(?)
 
