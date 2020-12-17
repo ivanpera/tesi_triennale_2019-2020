@@ -1,5 +1,3 @@
-Sommario
-
 % Studiare il ruolo che la tecnologia GraphQL può avere nella metodologia di sviluppo Model-Driven (Model-First).
 % Analizzare un prototipo sviluppato con questa tecnologia e realizzare un generatore di codice, basato su graphql-code-generator per i principali ORM su tecnologia NodeJS.
 
@@ -218,6 +216,7 @@ Stretegia implementativa
         ```
 
         INSERT
+            [signature?]
             Sequelize permette di effettuare l'operazione di inserimento passando direttamente un oggetto composto, a patto di includere le associazioni alle tabelle relative
             nel parametro "options" di input.
             ```
@@ -244,7 +243,22 @@ Stretegia implementativa
             ```
             Esempio di inserimento di un Product, uno user associato e indirizzi associati allo user.
 
-            L'inserimento pertanto viene eseguito prima processando tutti i campi con un'associazione con campo extractField, poi 
+            L'inserimento pertanto viene eseguito prima processando tutti i campi con un'associazione con campo extractField, poi recuperando in modo ricorsivo le associazioni dall'oggetto passato in input.
+
+        UPDATE
+            [signature?]
+            L'operazione di aggiornamento con modelli associati non è correntemente supportata da Sequelize, quindi è stato implementato il seguente procedimento:
+                -Eseguire un'operazione di ricerca richiedendo tutti i modelli da modificare in base al filtro passato alla funzione
+                -per ogni campo dell'oggetto che indica i cambiamenti, controllare se il nome di questo campo corrisponde a quello di un'associazione
+                -in caso positivo, per ogni modello da aggiornare, controllare se il campo di quel modello è un array
+                    -nel caso lo sia, l'array va sostituito completamente con quello passato in ingresso. Vengono quindi cancellati tutti i modelli associati con il modello preso in esame e,
+                    successivamente, si inseriscono nuovi modelli sulla base dei cambiamenti passati.
+                    -altrimenti, se il campo non è vuoto, la funzione di aggiornamento viene richiamata ricorsivamente passando come parametri i cambiamenti sul campo corrente, il dao della tabella legata a quel campo e il modello da aggiornare
+                -Alla fine, mappare tutti i modelli da aggiornare ai loro id, per poi eseguire un'unica operazione di aggiornamento in blocco sulla tabella.
+            [magari uno schema?]
+
+        
+
 
 
     % Applicazione visitor pattern per generazione codice(?)
