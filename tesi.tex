@@ -21,7 +21,7 @@ di codice per automatizzare la creazione di parti di software adibite alla gesti
 In particolare, il lavoro qui discusso consiste nello studio di una serie di tecnologie, librerie e del prototipo di generatore sviluppato dall'azienda per database MongoDB, per poi scrivere una versione base che possa gestire l'interazione con database SQL.
 
 
-Introduzione
+Background
 
     GraphQL
         Ideato da Facebook nel 2012, il linguaggio GraphQL è stato successivamente (nel ?) pubblicato in maniera open source e, dal 2018, è gestito dalla Linux Foundation (moar) come standard.
@@ -50,8 +50,6 @@ Introduzione
 
         GraphQL comprende il concetto di reflection! (espandi)
 
-
-    
     MDD
         Lo sviluppo "Model Driven" è un'approccio all'ingegneria del software orientato alla definizione di modelli piuttosto che di software.
         Parlare di modelli permette di astrarre la complessità del software, rendendo più chiara la visione dell'interazione fra le varie componenti dell'applicazione.
@@ -63,6 +61,7 @@ Introduzione
         GraphQL può essere usato come linguaggio per definire modelli: sono infatti già disponibili servizi di generazione di codice basata su schemi GraphQL.
         Quello utilizzato in questo caso è "GraphQL-code-generator" [link].
 
+Tecnologie
 
     Graphql code generator
         GraphQL code generator è un tool CLI open source, rilasciato nel XXXX da YYYY, in grado di analizzare uno schema GraphQL e, tramite plugins, generare codice.
@@ -76,6 +75,14 @@ Introduzione
         La parte di elaborato dedicata alla scrittura del generatore di codice consisterà dunque nell'impletare un plugin personalizzato compatibile con GraphQl code generator.
         I lavori saranno svolti sulla base di un plugin scritto internamente all'azienda, dedicato alla generazione di schemi e metodi per eseguire operazioni su un database MongoDB.
         Il codice generato dai plugin aziendali sarà basato su una struttura astratta aderente al pattern Data Access Object (DAO).
+
+    TypeScript (?)
+        [parla dei tipi avanzati]
+
+Obiettivi/Requisiti attività
+    [...]
+
+Architettura
 
     DAO Pattern
         Il pattern DAO è una strategia impiegata per separare lo strato funzionale di un'applicazione da quello di persistenza dei dati: permette quindi di sviluppare il lato applicativo senza avere conoscenza di come i dati vengano effettivamente gestiti, così come poter modificare la gestione dei dati
@@ -94,10 +101,17 @@ Introduzione
 
         Infine, è definito un DAO astratto che implementa le operazioni descritte nelle interfacce tramite metodi template.
         La comunicazione con lo strato di persistenza è delegata a implementazioni della classe DAO astratta.
+        
+Analisi del prototipo
+        
+    -descrizione funzionamento prototipo DAO
 
-        Come scritto in precedenza, l'azienda aveva già scritto un prototipo di implementazione per comunicazione con dabase MongoDB, pertanto i lavori di scrittura di una versione capace di interfacciarsi con database SQL sono partiti studiando questa.
-        Di accordo con l'azienda, la versione SQL è stata scritta sfruttando la libreria ORM "Sequelize" per l'interazione con la base di dati.
-    
+Testing
+    [...]
+        
+Stretegia implementativa
+    Di accordo con l'azienda, la versione SQL è stata scritta sfruttando la libreria ORM "Sequelize" per l'interazione con la base di dati. (Perchè Sequelize e non typeORM?)
+        
     ORM
         L'Object Relational Mapping è una tecnica di programmazione creata per favorire l'interazione fra un'applicazione scritta con un approccio ad oggetti ed una base di dati di tipo relazionale, o comunque modellante tabelli tramite campi scalari semplici.
         Una libreria ORM, infatti, rende possibile mappare le tabelle a degli oggetti e viceversa, permettendo pertanto di poter operare con questi dentro l'applicazione anche quando si deve comunicare con un DB.
@@ -124,11 +138,6 @@ Introduzione
         Sequelize
         modelli
         associazioni
-    
-    Analisi del prototipo
-        -descrizione prototipo DAO
-
-    Obiettivi/Requisiti attività ?
 
     Problematiche del progetto
         Le problematiche maggiori della fase di implemetazione del DAO astratto sono scaturite dalle differenze fra database di tipo documentale (come MongoDB) e database SQL.
@@ -164,12 +173,13 @@ Introduzione
                associazioni = associazioni Sequelize
         )
         Non usando il meccanismo di gestione delle associazioni si evita di dover effettuare cambiamenti all'interfaccia comune e non bisogna gestire dipendenze fra associazioni in quanto la risoluzione delle references dello schema verrà infatti eseguita solo dopo che Sequelize avrà raccolto tutti i dati della tabella e di quelle associate.
-        Oltre a questo, Sequelize gestisce in autonomia (o dietro configurazione esplicita) la creazione di foreign keys per collegare le tabelle fra di loro.
+        Oltre a questo, Sequelize gestisce in autonomia (o dietro configurazione esplicita) la creazione di foreign keys per collegare le tabelle fra di loro, non rendendo necessario aggiungere questi campi, utili solo alla versione SQL, nello schema GraphQL.
 
-        Il tipo precedentemente mostrato verrà quindi mappato con la seguente struttura di tabelle (viene ignorato il campo di tipo interfaccia)
+        Il tipo precedentemente mostrato verrà quindi mappato con la seguente struttura di tabelle (viene ignorato il campo di tipo interfaccia) (Evidenzia campi autogenerati?)
         [immagini varie]
 
     Approccio alla risoluzione delle problematiche (livello implementativo)
+
         Le funzioni principali del dao astratto da implementare sono:
             -insert
             -update
@@ -193,59 +203,48 @@ Introduzione
             daoModelName : string
         }
         ```
-
-        Per riferimenti più rapidi, ogni dao contiene anche una mappa campo : dao chiamata "associationsToDAO", così da poter rilevare più velocemente campi legati a sequelizeAssociations.
-
         [Descrizione campi interfaccia]
 
-        (A supporto dell'implementazione di questi metodi, è stato scritto un file aggiuntivo di parsing?)
+        Per riferimenti più rapidi, ogni dao contiene anche una mappa <nomeCampo : dao chiamata "associationsToDAO">, così da poter rilevare più velocemente campi legati a sequelizeAssociations.
+        Per gestire le associazioni, molti dei metodi scritti hanno una struttura ricorsiva del tipo:
+        ```
+        function recursiveFunction(..., dao : AbstractSequelizeDAO<any, any, any, any, any, any, any, any>) {
+            if(dao.associationsToDAO[k]) {
+                const association = dao.sequelizeAssociations.find(a => a.field === k);
+                ...
+                recursiveFunction(..., dao.associationsToDAO[k])
+            }
+        }
+        ```
 
         INSERT
+            Sequelize permette di effettuare l'operazione di inserimento passando direttamente un oggetto composto, a patto di includere le associazioni alle tabelle relative
+            nel parametro "options" di input.
             ```
-            async _insert(record: ConditionalPartialBy<ModelType, IDKey, IDAutogenerated>, options?: WriteOptions): Promise<ModelType> {
-                return (await this.dbToModels([await this.insertAndRetModel(record, options)]))[0];
-            }
-            ```
-            [dbToModels magari lo avevi già discusso prima?]
-            Il metodo dbToModels in questo caso riceve un array di Models e ne chiama il metodo "toJSON()" per convertirli in POJO.
-
-            "insertAndRetModel" è un metodo che costruisce la query per il metodo statico del modello del DAO.
-            ```
-            private async insertAndRetModel(record: ConditionalPartialBy<ModelType, IDKey, IDAutogenerated>, options?: WriteOptions): Promise<Model> {
-                const _record = this.modelToDb(record);
-                const _options = {...options?._, ...{include : this.rGetInsertIncludes(_record, this)}};
-                return await this.dbModel.create(_record, _options);
-            }
-            ```
-            Il metdo modelToDb è un primo caso di funzione ricorsiva basata sulle assoiazioni Sequelize, tecnica che è stata applicata ripetutamete durante il progetto:
-
-            ```
-            private rModelToDb(model : {[key: string] : any}, dao : AbstractSequelizeDAO<any, any, any, any, any, any, any, any>) : any {
-            for(let k in model) {
-                if (dao.associationsToDAO[k]) {
-                    const assoc = dao.sequelizeAssociations.find(a => a.field === k);
-                    if(Array.isArray(model[k])) {
-                        const newCollection = [];
-                        for(let m of model[k]) {
-                            if(typeof m === "object") {
-                                this.rModelToDb(m, dao.associationsToDAO[k]);
-                                newCollection.push(m)
-                            } else if(assoc && assoc.extractField) {
-                                newCollection.push({[assoc.extractField] : m})
-                            }
-                        }
-                        model[k] = newCollection;
-                    } else if (typeof model[k] === "object") {
-                        model[k] = this.rModelToDb(model[k], dao.associationsToDAO[k]);
-                    } else if (assoc?.extractField) {
-                        model[k] = {[assoc.extractField] : model[k]}
-                    }
+            return Product.create({
+                title: 'Chair',
+                user: {
+                    firstName: 'Mick',
+                    addresses: [{
+                        city: 'Austin',
+                        state: 'TX',
+                        zip: '78704'
+                    },{
+                        city: 'Austin_2',
+                        state: 'TX',
+                        zip: '78704'
+                    }]
                 }
-            }
-            return model;
-        }
+                }, {
+                include: [{
+                    association: Product.User,
+                    include: [ User.Addresses ]
+                }]
+            });
             ```
+            Esempio di inserimento di un Product, uno user associato e indirizzi associati allo user.
 
+            L'inserimento pertanto viene eseguito prima processando tutti i campi con un'associazione con campo extractField, poi 
 
 
     % Applicazione visitor pattern per generazione codice(?)
