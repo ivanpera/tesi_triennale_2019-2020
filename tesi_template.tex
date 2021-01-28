@@ -730,7 +730,10 @@ Anno Accademico 2019/2020}}%inserire l'anno accademico a cui si � iscritti
         \end{itemize}
       \end{itemize}
 
-      [[Schema dell'esecuzione]]
+      \begin{figure}[H]
+        \includegraphics[width=\textwidth]{generator_workflow.png}
+        \caption{Flusso di comunicazione fra i vari moduli del generatore}
+      \end{figure}
 
       \paragraph*{Modulo visitor}
       Viene definito un oggetto che estende la classe \emph{BaseVisitor} di GraphQL-codegen ed implementa metodi \emph{visit} per gestire definizioni di tipi ed interfacce.
