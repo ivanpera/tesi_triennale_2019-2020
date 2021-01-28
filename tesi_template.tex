@@ -23,25 +23,26 @@
 {{\Large{\textsc{Alma Mater Studiorum $\cdot$ Universit\`a di
 Bologna}}}} \rule[0.1cm]{15.8cm}{0.1mm}
 \rule[0.5cm]{15.8cm}{0.6mm}
-{\small{\bf SCUOLA DI SCIENZE\\
-Corso di Laurea in Nome corso di Laurea }}
+\large{Campus di Cesena\\
+Corso di Laurea in Ingegneria e Scienze Informatiche}
 \end{center}
-\vspace{15mm}
+\vspace{8mm}
 \begin{center}
-\LARGE\textbf{STUDIO DELLO STANDARD GRAPHQL NELLA MODEL DRIVEN PROGRAMMING:\\\vspace{2.5mm}ANALISI DI UN PROTOTIPO DI GENERATORE DI CODICE E SCRITTURA DI UNA VERSIONE PER LIBRERIE ORM SQL}
+\LARGE\textbf{Studio dello standard GraphQL nella Model Driven Programming:\\\vspace{2.5mm}Analisi di un prototipo di generatore di codece e scrittora di una versione per librerie ORM SQL}\\
+\vspace{8mm}
+\large{Tesi di Lurea in Programmazione ad Oggetti}
 \par
 \end{center}
 \vspace{40mm}
 \noindent
 \begin{minipage}[t]{0.47\textwidth}
-{\large{\bf Relatore:\\
-Prof.\\
-Mirko Viroli}}
+\large{\emph{Relatore:}}\\
+\large\textbf{Prof. Mirko Viroli}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.47\textwidth}\raggedleft
-{\large{\bf Presentata da:\\
-Ivan Perazzini}}
+\large{\emph{Presentata da:}}\\
+\large\textbf{Ivan Perazzini}
 \end{minipage}
 \vspace{20mm}
 \begin{center}
@@ -91,6 +92,9 @@ Anno Accademico 2019/2020}}%inserire l'anno accademico a cui si � iscritti
   \newpage
   \tableofcontents
   \newpage
+
+  \listoffigures
+  \addcontentsline{toc}{chapter}{Elenco delle figure}
 
   \chapter{Contesto}
     \section{Model Driven Programming}
@@ -444,8 +448,10 @@ Anno Accademico 2019/2020}}%inserire l'anno accademico a cui si � iscritti
       Il tipo precedentemente mostrato e quelli associati verranno quindi mappati con la seguente struttura di tabelle
       \begin{figure}[H]
         \includegraphics[width=\textwidth]{db-example.png}
-        \caption{I campi aggiuntivi sono quelli con la dicitura \emph{TL_SEQUELIZE_AUTO}.\\Person_dogSittersId è una tabella aggiunta, che serve per contenere i valori dell'array \emph{dogSittersId}}
+        \caption{Schema delle tabelle per l'entità \emph{Person}}
       \end{figure}
+      \paragraph*{}
+      I campi aggiuntivi sono quelli con la dicitura \emph{TL_SEQUELIZE_AUTO}.\\Person_dogSittersId è una tabella aggiunta, che serve per contenere i valori dell'array \emph{dogSittersId}.
       \paragraph*{}
       Per gestire le associazioni fra DAO è stata definita la seguente interfaccia:
       \begin{Verbatim}[samepage=true]
@@ -864,7 +870,6 @@ Anno Accademico 2019/2020}}%inserire l'anno accademico a cui si � iscritti
           \item Generando solo le tabelle delle implementazioni, ognuna contenente anche i campi delle interfacce
         \end{itemize}
     \newpage
-    % \chapter{Bibliografia}
     \begin{thebibliography}{3}
       \addcontentsline{toc}{chapter}{Bibliografia}
       \bibitem{GraqlQLDoc}GraphQL official site,\\\href{https://graphql.org/learn/}{https://graphql.org/learn/}
