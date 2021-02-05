@@ -41,13 +41,13 @@
     Questa possibilità rende quindi l'impiego di questo standard potenzialmente adatto per lo sviluppo Model Driven, potendo generare in modo automatizzato il codice applicativo che si occuperà di interfacciarsi con le strutture definite nello schema GraphQL.
     \paragraph*{}Da qualche tempo, l'azienda Twinlogix, ha deciso di sfruttare questa potenzialità per realizzare un generatore di codice che, basandosi sullo schema, costruisca definizioni di modelli per database.
     Per poter interagire con questi modelli, il generatore deve anche generare i DAO necessari.
-    A tal scopo, l'azienda sta anche lavorando alla scrittura di un DAO generico e metodi per interagirci indipenti dal tipo dell'oggetto richiesto e dal database sottostante.
+    A tal scopo, l'azienda sta anche lavorando alla scrittura di un DAO generico e metodi per interagirci indipendenti dal tipo dell'oggetto richiesto e dal database sottostante.
     È stato già scritto un primo prototipo di questo DAO e del generatore indirizzato a database MongoDB.
     Obiettivi dell'attività di seguito discussa sono stati quindi:
     \begin{itemize}
       \item studiare le tecnologie necessarie per lo svolgimento dell'attività;
       \item analizzare l'architettura del DAO e i prototipi sviluppati dall'azienda;
-      \item progettare e implementare una prima versione versione del DAO generico e del generatore che, sfuttando librerie ORM, potesse interfacciarsi con database SQL.
+      \item progettare e implementare una prima versione versione del DAO generico e del generatore che, sfruttando librerie ORM, potesse interfacciarsi con database SQL.
     \end{itemize}
     \renewcommand\section{\@startsection{section}{1}{\z@}%
     {-3.5ex \@plus -1ex \@minus -.2ex}%
@@ -58,9 +58,9 @@
   \newpage
   \listoffigures
   \addcontentsline{toc}{chapter}{Elenco delle figure}
-  \chapter{Contesto}
+  \chapter{Contesto e Tecnologie}
     \section{Model Driven Programming}
-      Lo sviluppo "Model Driven" è un'approccio all'ingegneria del software orientato alla definizione di modelli piuttosto che di software.
+      Lo sviluppo "Model Driven" è un approccio all'ingegneria del software orientato alla definizione di modelli piuttosto che di software.
       \paragraph*{}
       La complessità di un progetto può essere catalogata in due macro gruppi:
       \begin{itemize}
@@ -72,10 +72,10 @@
       La complessità di molti sistemi software moderni è talmente elevata da renderne difficile sia la comprensione (basandosi solo sul codice scritto), sia la realizzazione.
       Parlare di modelli permette di rendere comprensibile l'architettura di un progetto e di potersi concentrare sugli obiettivi, dimenticandosi delle complicazioni e limitazioni che verrebbero incontrate in fase di sviluppo.
       \paragraph*{}
-      La programmazione in sè è un'attività con un alta potenzialità di errori accidentali: una sola riga di codice sbagliata è infatti tutto quello che basta per causare costosi danni \footnote{http://users.csc.calpoly.edu/~jdalbey/SWE/Papers/att_collapse}.
+      La programmazione in sé è un'attività con un'alta potenzialità di errori accidentali: una sola riga di codice sbagliata è infatti tutto quello che basta per causare costosi danni \footnote{http://users.csc.calpoly.edu/~jdalbey/SWE/Papers/att_collapse}.
       \paragraph*{}
       Spesso, in fase di implementazione di sistemi complessi, ci si trova poi davanti a blocchi di codice strutturati in modo estremamente ripetitivo e complesso: questa è una situazione nella quale errori accidentali sono quasi assicurati.
-      Questo tipo di sezioni si prestano molto bene ad essere autogenerate, ed è qui che entra in gioco la modellazione: questi blocchi di codice possono essere descritti in modo astratto ed indipendente da linguaggi di programmazione e librerie.
+      In questo tipo di sezioni la modellazione può incontrare facilmente la generazione di codice: questi blocchi di codice possono essere descritti in modo astratto ed indipendente da linguaggi di programmazione e librerie.
       \paragraph*{}
       Utilizzare questo approccio dove utile porta a notevoli benefici:
       \begin{itemize}
@@ -101,16 +101,15 @@
           var firstName = person.GetFirstName();
         }
       \end{Verbatim}
-      Gli immediati vantaggi di questo approccio sono il ridotto numero di righe di codice scritte e la conseguente pulizia del codice, nonchè la semplicità nell'interazione con il DB e la minor probabilità di errore, non dovendo scrivere esplicitamente interrogazioni in linguaggio SQL.
+      Gli immediati vantaggi di questo approccio sono il ridotto numero di righe di codice scritte e la conseguente pulizia del codice, nonché la semplicità nell'interazione con il DB e la minor probabilità di errore, non dovendo scrivere esplicitamente interrogazioni in linguaggio SQL.
       D'altro canto, utilizzare una libreria ORM ha anche numerosi svantaggi:
       \begin{itemize}
         \item E' una libreria complessa se la si vuole sfruttare a fondo
         \item Toglie del controllo al programmatore vista la grande astrazione che introduce
-        \item Può produrre query subottimali
+        \item Può produrre query sub-ottimali
       \end{itemize}
       Questi svantaggi non sono però stati ritenuti abbastanza influenti da decidere di optare per una soluzione di più basso livello.
     \newpage
-  \chapter{Tecnologie}
     \section{GraphQL}
       Ideato da Facebook nel 2012, il linguaggio GraphQL è stato successivamente pubblicato in maniera open source e, dal 2018, è gestito come standard dalla GraphQL Foundation.
       Nasce con il duplice scopo di modellare entità collegate fra di loro da relazioni e di fornire una soluzione a noti problemi dell'approccio RESTful, architettura per la comunicazione client server prevalente nello sviluppo in ambito web.
@@ -164,7 +163,7 @@
         Il fatto che ci sia un solo punto d'ingresso significa che per il client basterà contattare un unico endpoint per ricevere tutte le informazioni di cui ha bisogno.
         Questo è evidenziato nell'immagine di esempio di comunicazione con server REST: il client ha dovuto contattare tre endpoint differenti.
       \paragraph*{Modifiche all'API}
-        Il fatto che in un'archittura REST sia il server a dover definire il formato dei risultati di una chiamata comporta che l'API di back-end debbe essere modificata spesso per riflettere i cambiamenti nell'interfaccia front-end, se non si vuole
+        Il fatto che in un'architettura REST sia il server a dover definire il formato dei risultati di una chiamata comporta che l'API di back-end debba essere modificata spesso per riflettere i cambiamenti nell'interfaccia front-end, se non si vuole
         incorrere in fenomeni di over o underfetching.
         Lo standard GraphQL permette quindi una più rapida produzione di applicazioni e un'API back-end più stabile.
       \paragraph*{Interpretazione dell'output}
@@ -176,14 +175,14 @@
         Quello utilizzato in questo caso è \emph{GraphQL Code Generator}\footnote{https://graphql-code-generator.com/}.
       \newpage
     \section{GraphQL code generator}
-        GraphQL code generator è un tool CLI open source in grado di analizzare uno schema GraphQL e, tramite plugins, generare codice su diversi file.
-        Il modo in cui i plugin di questo strumento operano segue il pattern di programmazione \emph{visitor}.
+      GraphQL code generator è un tool CLI open source in grado di analizzare uno schema GraphQL e, tramite plugins, generare codice su diversi file.
+      Il modo in cui i plugin di questo strumento operano segue il pattern di programmazione \emph{visitor}.
       \paragraph*{}
         Il pattern visitor è una soluzione al problema che si verifica quando bisogna effettuare operazioni su una struttura di oggetti senza però aggiungere funzionalità agli stessi:
         ogni oggetto della struttura implementa un'interfaccia che definisce un metodo \emph{accept} che riceve come parametro un'implementazione dell'interfaccia Visitor.
         Questa specifica invece un metodo \emph{visit} per ogni tipologia di oggetto (ad esempio, ogni classe) sul quale svolgere operazioni.
       \paragraph*{}
-        Nell'applicazione principale poi, per ogni oggetto, viene chiamato il metodo accept passando ogni implementazione di Visitor, cosicchè per aggiungere operazioni/trasformazioni delle classi è possibile semplicemente implementare un nuovo Visitor.
+        Nell'applicazione principale poi, per ogni oggetto, viene chiamato il metodo accept passando ogni implementazione di Visitor, cosicché per aggiungere operazioni/trasformazioni delle classi è possibile semplicemente implementare un nuovo Visitor.
       \begin{figure}[H]
           \includegraphics[width=\textwidth]{visitor-example.jpg}
           \caption{Esempio di struttura e funzionamento del pattern Visitor.}
@@ -247,7 +246,7 @@
       Mentre una classe statica relativa ad una tabella rappresenta tutta la tabella ed espone metodi per effettuare modifiche e letture in blocco su di essa, un \emph{istanza} di Model rappresenta una riga di una tabella.
       I metodi di modifica riguarderanno solo il record associato a quella istanza.
       \paragraph*{Associazioni}
-      Le associazioni sono oggetti usati per gestire le associazioni \emph{ono a uno}, \emph{uno a molti} e \emph{molti a molti} fra tabelle.
+      Le associazioni sono oggetti usati per gestire le associazioni \emph{uno a uno}, \emph{uno a molti} e \emph{molti a molti} fra tabelle.
       Esistono quattro tipi di associazioni Sequelize:
       \begin{itemize}
         \item HasOne
@@ -272,21 +271,26 @@
   \chapter{Requisiti}
     \section{Requisiti funzionali}
       \begin{itemize}
+        \item il sistema deve potersi interfacciare con un database SQL, traducendo le query dal formato aziendale a SQL.
         \item il sistema sviluppato deve essere in grado di tradurre uno schema GraphQL in formato tabellare, in particolare:
         \begin{itemize}
-          \item deve poter gestire tipi GraphQL semplici, ovvero composti da soli valori scalari;
-          \item deve gestire composizioni, nel caso un tipo GraphQL ne comprenda altri fra i suoi campi;
-          \item deve gestire relazioni fra tipi;
-          \item deve poter gestire casi di ereditarietà fra tipi GraphQL.
+          \item deve poter generare tabelle SQL ed opportune relazioni basate sui tipi definiti in uno schema GraphQL, particolare attenzione viene posta su tipi dalle caratteristiche più complesse, quali:
+          \begin{itemize}
+            \item tipi con composizioni, nel caso un tipo GraphQL ne comprenda altri fra i suoi campi;
+            \item tipi associati ad altri tipi tramite direttive sullo schema GraphQL;
+            \item ereditarietà fra interfacce e tipi che le implementano.
+          \end{itemize}
+          \item deve poter generare DAO per gestire la lettura/scrittura sulle tabelle generate;
+          \item deve poter generare tipi di supporto, come filtri, proiezioni e ordinamenti, personalizzati per ogni DAO;
         \end{itemize}
-        \item il sistema deve poter supportare tipi di dato personalizzati;
-        \item il sistema deve potersi interfacciare con un database SQL, traducendo le query dal formato del prototipo aziendale a SQL.
+        \item il sistema deve poter supportare tipi di dato personalizzati nei campi dei tipi;
       \end{itemize}
     \section{Requisiti non funzionali}
       \begin{itemize}
         \item la comunicazione con il database e la traduzione delle query devono essere implementate utilizzando la libreria Sequelize;
         \item l'interazione con i DAO deve essere quanto più vicina a quella della versione per MongoDB, per non dover modificare la parte comune della libreria;
-        \item lo schema GraphQL per generare il codice deve essere quantopiù simile a quello per la versione MongoDB. Si possono invece modificare liberamente le direttive aggiuntive usate nello schema.
+        \item lo schema GraphQL per generare il codice deve essere quanto più simile a quello per la versione MongoDB. Si possono invece modificare liberamente le direttive aggiuntive usate nello schema;
+        \item il sistema non deve creare un overhead eccessivo per la risoluzione delle operazioni.
       \end{itemize}
   \newpage  
   \chapter{Architettura del prototipo}
@@ -302,10 +306,10 @@
     \end{figure}
     \paragraph*{}
     L'esempio sopra mostrato descrive un caso nel quale l'applicazione \emph{DaoPatternDemo} utilizza un oggetto implementante l'interfaccia \emph{StudentDao} per ottenere oggetti (DTO) di tipo \emph{Studenti}.
-    Come il dao recupererà i dati non è rilevante per DaoPatterDemo: si è quendi liberi di moificare l'implementazione di StudentDao.
+    Come il dao recupererà i dati non è rilevante per DaoPatterDemo: si è quindi liberi di modificare l'implementazione di StudentDao.
     \paragraph*{}
-    Il progetto però punta a generare dei DAO per oggetti che verranno a loro volta generati in futuro: non è quindi possibile definire DTO e tantomento interfacce e metodi personalizzati per gestirli.
-    Si potrebbero supportare solo operazioni estremamente generiche, come "elenca tutte i record", "elimina tutti i record", "estrai l'n-esimo record"/dots.
+    Il progetto però punta a generare dei DAO per oggetti che verranno a loro volta generati in futuro: non è quindi possibile definire DTO e tanto meno interfacce e metodi personalizzati per gestirli.
+    Si potrebbero supportare solo operazioni estremamente generiche, come "elenca tutte i record", "elimina tutti i record", "estrai l'n-esimo record"\dots.
     \paragraph*{}
     Per superare questa limitazione, l'azienda ha deciso di sfruttare il supporto che Typescript offre per i tipi generici: le interfacce della libreria puntano a definire un DAO generico adatto ad ogni tipo di DTO.
     \begin{figure}[H]
@@ -335,18 +339,18 @@
     \begin{itemize}
       \item I campi \emph{type} e \emph{reference} indicano se l'associazione è di tipo \emph{foreign/inner} e \emph{uno a molti/uno a uno};
       \item \emph{field} indica il nome del campo che andrà risolto come associazione
-      \item \emph{refFrom} e refTo sono i nomi dei campi che fungono da chavi per la relazione
+      \item \emph{refFrom} e refTo sono i nomi dei campi che fungono da chiavi per la relazione
       \item \emph{dao} è il nome del DAO associato
     \end{itemize}
     \paragraph*{}
-    Quando un campo con nome uguale al parammetro \emph{field} viene ricercato nel DAO che contiene l'associazione, prima viene risolta l'operazine di ricerca sul DAO interrogato, dopodichè
+    Quando un campo con nome uguale al parametro \emph{field} viene ricercato nel DAO che contiene l'associazione, prima viene risolta l'operazione di ricerca sul DAO interrogato, dopodiché
     viene effettuata una lettura anche sul DAO associato al campo \emph{field} tramite il metodo \emph{load}, definito (ma non mostrato nello schema) nell'interfaccia ReadDAO.
     \paragraph*{}
     L'interfaccia \emph{DAO} estende l'interfaccia ReadDAO e completa il set di operazioni aggiungendo la definizione dei metodi di scrittura (insert, update, replace\dots).
     La sua implementazione astratta si limita a definire questi metodi come template methods.
     \paragraph*{}
     I parametri dei metodi di lettura e scrittura sono principalmente tre: \emph{filtri}, \emph{ordinamenti} e \emph{proiezioni}.
-    Poichè il DAO deve operare su qualsiasi tipo di DTO, la struttura di questi tre parametri verrà generata durante il processo di generazione del codice e i loro tipi
+    Poiché il DAO deve operare su qualsiasi tipo di DTO, la struttura di questi tre parametri verrà generata durante il processo di generazione del codice e i loro tipi
     verranno passati fra i parametri generici del DAO generato.
     \paragraph*{}
     La classe \emph{AbstractDAO} dovrà essere poi implementata da classi astratte dedicate per ogni tipo di DB sottostante: l'azienda ha già definito ed implementato la classe \emph{AbstractMongooseDAO} per gestire la comunicazione con un database MongoDB.
@@ -358,8 +362,8 @@
   \newpage
   \chapter{Sviluppo del DAO}
     \paragraph*{}
-    Le problematiche maggiori della fase di implemetazione del DAO astratto sono scaturite dalle differenze fra database di tipo documentale (come MongoDB) e database SQL.
-    Gli schemi GraphQL utilizzati dall'azienda per eseguire test, e che sono stati presi come punto di riferimento per lo sviluppo dell'implementazione, presentano alcuni tipi difficilmente convertibili in formato tabellare, questo perchè gli schemi GraphQL sono
+    Le problematiche maggiori della fase di implementazione del DAO astratto sono scaturite dalle differenze fra database di tipo documentale (come MongoDB) e database SQL.
+    Gli schemi GraphQL utilizzati dall'azienda per eseguire test, e che sono stati presi come punto di riferimento per lo sviluppo dell'implementazione, presentano alcuni tipi difficilmente convertibili in formato tabellare, questo perché gli schemi GraphQL sono
     più adatti per definire modelli per database NoSQL.
     \section{Differenze tra database SQL e NoSQL}
     \paragraph*{}
@@ -448,7 +452,7 @@
       Non usando il meccanismo di gestione dei riferimenti si evita di dover effettuare cambiamenti all'interfaccia comune e non bisogna gestire dipendenze fra essi, in quanto la loro risoluzione verrà eseguita solo dopo che il DAO Sequelize avrà raccolto tutti i dati della tabella e di quelle associate.
       Oltre a questo, Sequelize gestisce in autonomia (o dietro configurazione esplicita) la creazione di foreign keys per collegare le tabelle fra di loro, non rendendo necessario aggiungere questi campi, utili solo alla versione SQL, nello schema GraphQL.
       \paragraph*{}
-      I campi di tipi embeddedd verranno mappati in tabelle secondarie, con riferimenti alle tabelle alle quali appartengono.
+      I campi di tipi embedded verranno mappati in tabelle secondarie, con riferimenti alle tabelle alle quali appartengono.
       Gli array vengono gestiti tramite l'associazione Sequelize di tipo HasMany: nel caso siano array di dati scalari, verrà creata una tabella apposita per contenere questi valori.
       \paragraph*{}
       Per la gestione delle interfacce è stato scelto di tenere tutti i campi comuni in una tabella relativa all'interfaccia, mentre in quelle delle implementazioni saranno salvati i dati relativi ad esse ed un riferimento al record associato sulla/e tabella/e dell'interfaccia/e.
@@ -575,7 +579,7 @@
           User.findAll({ include: { association: 'Instruments' } });
         \end{Verbatim}
         \paragraph*{}
-        È anche supportata l'inclusione di più modelli alla volta, nonchè di modelli associati a quelli inclusi, in modo innestato.
+        È anche supportata l'inclusione di più modelli alla volta, nonché di modelli associati a quelli inclusi, in modo innestato.
         \begin{Verbatim}[samepage=true]
           User.findAll({ include: [
                                     { association: 'Instruments' }, 
@@ -602,7 +606,7 @@
           });
         \end{Verbatim}
         \paragraph*{}
-        Definire così le opzioni di ricerca scollegerebbe i filtri dei campi di una tabella da quelli dei campi di una tabella che rappresenterebbe un'oggetto innestato in quella precedente.
+        Definire così le opzioni di ricerca scollegherebbe i filtri dei campi di una tabella da quelli dei campi di una tabella che rappresenterebbe un oggetto innestato in quella precedente.
         Ad esempio, supponendo che l'associazione "Instruments" rappresenti un oggetto embedded in User, il filtro di ricerca
         \begin{Verbatim}[samepage=true]
           userFilter : UserFilter = {
@@ -613,7 +617,7 @@
               }
           }}
         \end{Verbatim}
-        Non sarebbe traducibile, non potendo mettere in "OR" i due filtri, secondo la modalità precendente presentata.
+        Non sarebbe traducibile, non potendo mettere in "OR" i due filtri, secondo la modalità precedente presentata.
         \paragraph*{} 
         Fortunatamente, Sequelize permette di elevare allo stesso livello tutti i filtri, risolvendo così il problema.
         \begin{Verbatim}[samepage=true]
@@ -633,7 +637,7 @@
           });
         \end{Verbatim}
         \paragraph*{}
-        È possbile indicare, per ogni modello incluso, una lista di attributi da estrarre. Grazie a questo è possibile implementare la proiezione di attributi.
+        È possibile indicare, per ogni modello incluso, una lista di attributi da estrarre. Grazie a questo è possibile implementare la proiezione di attributi.
         \paragraph*{}
         L'ordinamento, similmente ai filtri, è specificabile sia modello per modello che al livello radice della query. Quest'ultima opzione è stata scelta.
         Ad esempio, l'ordinamento
@@ -643,7 +647,7 @@
             {"Instruments.size" : SortDirection.DESC}
           ]
         \end{Verbatim}
-        può esere tradotto in una query Sequelize nel seguente modo:
+        può essere tradotto in una query Sequelize nel seguente modo:
         \begin{Verbatim}[samepage=true]
           User.findAll(
             {
@@ -658,14 +662,14 @@
             });
         \end{Verbatim}
       \subsubsection*{Gestione delle inclusioni}
-        Sequelize permetterebbe di effettuare automaticamente un join fra il Model iniziale, tutti quelli associati e potenzialmente anche quelli associati a quelli assocciati tramite l'opzione, da inserire nella query,
+        Sequelize permetterebbe di effettuare automaticamente un join fra il Model iniziale, tutti quelli associati e potenzialmente anche quelli associati a quelli associati tramite l'opzione, da inserire nella query,
         \emph{attributes: \{all : true, nested : true\}}.
         \paragraph*{}
         Questo semplificherebbe di molto il problema della gestione della query, ma ogni interrogazione comporterebbe un numero elevato di operazioni di join.
         Per ridurre il numero di join l'implementazione della ricerca cercherà di includere solo le tabelle strettamente necessarie.
         \paragraph*{}
-        A tal proposito, vengono analizzati filtri, proiezioni e ordinamenti ricevuti in input per identificare i modelli da includere nella ricera.
-        Per fare ciò, i parametri in input vengono tradotti, dove serve, sia in un fomato comprensibile per Sequelize, sia in un oggetto a più livelli per facilitare l'individuazione di campi associati.
+        A tal proposito, vengono analizzati filtri, proiezioni e ordinamenti ricevuti in input per identificare i modelli da includere nella ricerca.
+        Per fare ciò, i parametri in input vengono tradotti, dove serve, sia in un formato comprensibile per Sequelize, sia in un oggetto a più livelli per facilitare l'individuazione di campi associati.
         \paragraph*{}
         Per esempio, il filtro "userFilter" precedentemente mostrato viene convertito in
         \begin{Verbatim}[samepage=true]
@@ -716,7 +720,7 @@
       L'eliminazione di un modello e di tutte le sue associazioni di tipo hasOne/hasMany è gestita automaticamente da Sequelize impostando nell'associazione l'opzione sql ONDELETE CASCADE.
       Questo però non copre due casi: quello in cui si chiami la funzione di eliminazione sul DAO di una implementazione e quello in cui lo si chiami su quello di una interfaccia la quale implementazione implementa due o più interfacce.
       \paragraph*{}
-      Nel primo caso verrebbe eliminato solo il record dell'implementazione mentre quelli relativi alle interfacce no, poichè associati con associazioni di tipo "belongsTo", mentre nel secondo il record dell'interfaccia e dell'implementazione verrebbero eliminati, ma quelli delle altre interfacce no, non essendo associati alla prima.
+      Nel primo caso verrebbe eliminato solo il record dell'implementazione mentre quelli relativi alle interfacce no, poiché associati con associazioni di tipo "belongsTo", mentre nel secondo il record dell'interfaccia e dell'implementazione verrebbero eliminati, ma quelli delle altre interfacce no, non essendo associati alla prima.
       \paragraph*{}
       Visto che solo i record delle implementazioni conoscono tutte le interfacce ad essi collegati, sono i DAO di questi a gestire le operazioni di eliminazione: se la funzione viene chiamata sul DAO di un'interfaccia, questo la rigira a tutti i DAO rilevanti di implementazioni.
       I DAO delle implementazioni poi si occuperanno di distruggere i record corretti sui modelli delle interfacce.
@@ -730,7 +734,7 @@
         \item Un plugin per GraphQL-code-generator per tenere in comunicazione gli altri moduli
         \item Un file per gestire il trattamento dei nodi del modello GraphQL (implementando il pattern visitor)
         \item Un generatore per verificare la validità dei nodi e invocare metodi di generazione
-        \item Un generatore astratto per contere metodi comuni e le sue implementazioni:
+        \item Un generatore astratto per contenere metodi comuni e le sue implementazioni:
         \begin{itemize}
           \item Un generatore per generare gli schemi Sequelize
           \item Un generatore per generare DAO e tipi di supporto
@@ -761,7 +765,7 @@
       \end{Verbatim}
       Campi principali del tipo TsSequelizeGeneratorNode:
       \begin{itemize}
-        \item type: è assente se il nodo è autogenerato (vedere in seguito), altrimente prende uno dei valori dell'enum NodeTypes.
+        \item type: è assente se il nodo è autogenerato (vedere in seguito), altrimenti prende uno dei valori dell'enum NodeTypes.
         \item name: nome del nodo
         \item isAutoGenerated: identifica se il nodo è stato aggiunto pur non essendo presente nello schema GraphQL. In particolare, identifica i nodi creati per gestire array di dati primitivi.
         \item collection: nome della tabella nel database
@@ -775,7 +779,7 @@
       \begin{itemize}
         \item Ogni nodo abbia un campo id o almeno una interfaccia con un campo tale.
         \item I campi sui quali i riferimenti (segnalati tramite direttiva @sqlizeForeignRef o @sqlizeInnerRef) si basano siano esistenti.
-        \item I campi condivisi fra implemetazioni ed interfacce siano di tipo compatibile.
+        \item I campi condivisi fra implementazioni ed interfacce siano di tipo compatibile.
       \end{itemize}
       \paragraph*{}
       Dentro la classe del generatore è contenuta una lista di implementazioni di generatore del file finale, tutti implementanti una classe astratta.
@@ -792,7 +796,7 @@
       \paragraph*{Generatore dei DAO}
       Per ogni nodo generato dal visitor, il generatore dei DAO verifica in primo luogo se l'attributo "isAutoGenerated" è impostato.
       Nel caso lo sia, significa che il nodo non è parte dello schema GraphQL e che quindi il plugin di generazione dei tipi TypeScript, lanciato prima del plugin personalizzato descritto in queste sezioni, non ha generato un tipo relativo ad esso.
-      Il generatore dei DAO deve quindi definire tipi per gestire i nodi autogenerati poichè gli oggetti di tipo SequelizeAbstractDAO richiedono fra i parametri generici anche il tipo del DTO.
+      Il generatore dei DAO deve quindi definire tipi per gestire i nodi autogenerati poiché gli oggetti di tipo SequelizeAbstractDAO richiedono fra i parametri generici anche il tipo del DTO.
       \paragraph*{}
       Il generatore dei DAO si occupa anche, per ogni nodo, di generare filtri, proiezioni e ordinamenti sulla base dei campi del nodo.
       \paragraph*{}
@@ -816,12 +820,12 @@
             \item interfacce estese da più tipi;
           \end{itemize}
         \paragraph*{}
-          Per questo ambiente sono stati poi scritti una serie di \emph{unit tests}, utilizzando la libreria di testing JavaScript \emph{Jest}, già impiegata nelle prove del prototipo aziendale vista la sua semplicità di utilizo ed integrazione.
+          Per questo ambiente sono stati poi scritti una serie di \emph{unit tests}, utilizzando la libreria di testing JavaScript \emph{Jest}, già impiegata nelle prove del prototipo aziendale vista la sua semplicità di utilizzo ed integrazione.
         \paragraph*{}
           Questi test sono stati scritti per verificare il comportamento delle operazioni del DAO sia in caso di manipolazioni di dati di tipo semplice, sia in caso di tipi più complessi, come quelli elencati precedentemente.
           Vengono di seguito illustrati i casi più interessanti, anche per dimostrare il funzionamento del prodotto della tesi.
           \paragraph*{}
-          Gli esempi seguenti interagiranno con i DAO \emph{user}, \emph{user2} e \emph{subUser}: il primo definisce una interfaccia con gli attributi \emph{firstName, a, b}, il secondo ha l'attributo \emph{firtName2} mentre subUser è un tipo che implementa le due interfacce e aggiunge l'attributo \emph{subAttr}.
+          Gli esempi seguenti interagiranno con i DAO \emph{user}, \emph{user2} e \emph{subUser}: il primo definisce una interfaccia con gli attributi \emph{firstName, a, b}, il secondo ha l'attributo \emph{firstName2} mentre subUser è un tipo che implementa le due interfacce e aggiunge l'attributo \emph{subAttr}.
           \begin{Verbatim}[samepage=true]
             type User = {
                 id?: Scalars['ID'];
@@ -836,7 +840,11 @@
             };
             
             type SubUser = {
-              \\[...] elenco dei campi di User e User2
+              id?: Scalars['ID'];
+              a?: Maybe<A>;
+              b?: Maybe<Array<Scalars["String"]>>;
+              firstName?: Maybe<Scalars['String']>;
+              firstName2?: Maybe<Scalars['String']>;
               __typename? : "SubUser";
               subAttrib?: Maybe<String>
             };
@@ -848,11 +856,13 @@
             \begin{Verbatim}[samepage=true]
               const record = {
                               firstName: "FirstName",
-                              a : { a : "A",
+                              a : { 
+                                    a : "A",
                                     a2 : "A2",
-                                    d: { d : "D",
+                                    d: { 
+                                        d : "D",
                                         e : ["E"]
-                                      }
+                                       }
                                   },
                               b: ["B1", "B2", "B3"]
                              })
@@ -886,7 +896,7 @@
               expect(subUser!.id).toBe(user!.id);
               expect(subUser!.subAttrib).toBe("subAttr");
             \end{Verbatim}
-            Si chiama il metodo di inserimento di un DAO di tipo sottoclasse (ovvero un tipo che implementa un'interfaccia). Si verifica successivamente che sia possibile recuperare lo stesso record inserito sia interrogando il DAO dell'interfaccia che quello dell'implementazione. La prova di uguagliaza fra il record ottenuto dal DAO
+            Si chiama il metodo di inserimento di un DAO di tipo sottoclasse (ovvero un tipo che implementa un'interfaccia). Si verifica successivamente che sia possibile recuperare lo stesso record inserito sia interrogando il DAO dell'interfaccia che quello dell'implementazione. La prova di uguaglianza fra il record ottenuto dal DAO
             dell'interfaccia e quello dell'implementazione viene fatta su una serie di attributi, fra cui l'ID.
           \newpage
           \paragraph{Classe con più interfacce}
@@ -903,7 +913,7 @@
               expect(su.id).toBe(u?.id);
               expect(su.id).toBe(u2?.id);
             \end{Verbatim}
-            Viene inserito un record, tramite il DAO di una sottoclasse, che implementa più di una interfaccia. Successiavamente si controlla che interrogare il DAO utilizzato o quello delle sue interfacce porti a recuperare lo stesso record.
+            Viene inserito un record, tramite il DAO di una sottoclasse, che implementa più di una interfaccia. Successivamente si controlla che interrogare il DAO utilizzato o quello delle sue interfacce porti a recuperare lo stesso record.
           \newpage
         \subsection{Aggiornamento}
           \paragraph{Aggiornamento di entità innestate}
@@ -911,8 +921,8 @@
               \\[...] inserimento records
               dao.user.updateMany({
                                    "a.d.d" : "D",      //Filtro
-                                   "a.d.e" : null}},
-                                  {
+                                   "a.d.e" : null
+                                  }, {
                                    "a.d.d" : "Dc",     //Aggiornamenti
                                    "a.a" : "A11",
                                    "a.d.e" : "E2",
@@ -928,7 +938,7 @@
                                           })
               expect(numUpdated).toBe(2)
             \end{Verbatim}
-            Vengono inseriti dei records con oggetti innestati e array e poi, sempre sullo lo stesso DAO dell'inserimento, viene chiamata la funzione di aggiornamento, indicando che si vogliono aggiornare solo alcuni dei record aggiunti utilizando il parametro di tipo filtro.
+            Vengono inseriti dei records con oggetti innestati e array e poi, sempre sullo lo stesso DAO dell'inserimento, viene chiamata la funzione di aggiornamento, indicando che si vogliono aggiornare solo alcuni dei record aggiunti utilizzando il parametro di tipo filtro.
             I cambiamenti indicati vanno a definire aggiornamenti sia su array che su oggetti, incluso l'aggiornamento di parametri di oggetti innestati dentro oggetti innestati.
             Successivamente si contano i record che sono stati correttamente aggiornati.
           \newpage
@@ -972,7 +982,7 @@
               }
             \end{Verbatim}
             Viene inserito un record tramite il DAO della superclasse, poi sostituito con un oggetto di tipo "sottoclasse1".
-            Dopodichè, tramite una ricerca per ID, si accede al nuovo record e ne si controlla il tipo, che deve quindi essere diventato "sottoclasse1".
+            Dopodiché, tramite una ricerca per ID, si accede al nuovo record e ne si controlla il tipo, che deve quindi essere diventato "sottoclasse1".
             Si sostituisce nuovamente il nuovo record con uno di tipo "sottoclasse2" e si ripete la prova.
         \newpage
         \subsection{Eliminazione}
@@ -1049,7 +1059,7 @@
         Oltre ad un supporto continuato (tutto il progetto, comprese le interfacce del DAO, è ancora in fase prototipale), una funzionalità immediatamente aggiungibile sarebbe quella di poter far scegliere, in fase di generazione, come trattare le gerarchie di interfacce e implementazioni.
         Correntemente è possibile gestire le gerarchie solo nel modo descritto nei capitoli precedenti, ma l'azienda sarebbe interessata a poter gestire le gerarchie anche negli altri due modi rimanenti:
         \begin{itemize}
-          \item Accorpando tutte le implementazioni nella tabela dell'interfaccia
+          \item Accorpando tutte le implementazioni nella tabella dell'interfaccia
           \item Generando solo le tabelle delle implementazioni, ognuna contenente anche i campi delle interfacce
         \end{itemize}
     \newpage
