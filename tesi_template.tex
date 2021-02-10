@@ -31,24 +31,35 @@
                                    {\normalfont\large\bfseries\center}}
   \hyphenation{ON-DELETE GraphQL AbstractMongooseDAO}
   \section{Introduzione}
-  Gli ultimi anni hanno visto una maturazione dello standard\footnote{http://spec.graphql.org/} GraphQL, dei servizi costruiti per implementarlo e la sua adozione da parte di numerose aziende\footnote{https://landscape.graphql.org/card-mode?category=graph-ql-adopter\&grouping=category}.
-  Definito per la prima volta internamente a Facebook nel 2012, oggi si presenta come uno standard capace di competere con l'architettura di tipo REST per il dialogo fra client e server.
-  \paragraph*{}
-  Caratterista fondamentale di GraphQL è la possibilità di definire uno schema che permette di modellare il formato delle query esposte e quello delle entità restituite al client, di modo che questo possa effettuare richieste personalizzate, ad un singolo endpoint e vedersi restituire dati già tipizzati.
-    Le entità sono definite da campi tipizzati e relazioni con altre entità, la struttura del dominio delle interrogazioni gestibili dal server è strutturata come un grafo.
-    \paragraph*{}Le possibilità offerte dallo standard però non si limitano alla comunicazione fra client e server: essendo i campi delle entità tipizzati, ed avendo lo standard un concetto di introspection, è possibile usare 
-    schemi GraphQL anche per definire lo strato del model.
-    Questa possibilità rende quindi l'impiego di questo standard potenzialmente adatto per lo sviluppo Model Driven, potendo generare in modo automatizzato il codice applicativo che si occuperà di interfacciarsi con le strutture definite nello schema GraphQL.
-    \paragraph*{}Da qualche tempo, l'azienda Twinlogix, ha deciso di sfruttare questa potenzialità per realizzare un generatore di codice che, basandosi sullo schema, costruisca definizioni di modelli per database.
-    Per poter interagire con questi modelli, il generatore deve anche generare i DAO necessari.
-    A tal scopo, l'azienda sta anche lavorando alla scrittura di un DAO generico e metodi per interagirci indipendenti dal tipo dell'oggetto richiesto e dal database sottostante.
-    È stato già scritto un primo prototipo di questo DAO e del generatore indirizzato a database MongoDB.
-    Obiettivi dell'attività di seguito discussa sono stati quindi:
-    \begin{itemize}
-      \item studiare le tecnologie necessarie per lo svolgimento dell'attività;
-      \item analizzare l'architettura del DAO e i prototipi sviluppati dall'azienda;
-      \item progettare e implementare una prima versione versione del DAO generico e del generatore che, sfruttando librerie ORM, potesse interfacciarsi con database SQL.
-    \end{itemize}
+    Gli ultimi anni hanno visto una maturazione dello standard\footnote{http://spec.graphql.org/} GraphQL, dei servizi costruiti per implementarlo e la sua adozione da parte di numerose aziende\footnote{https://landscape.graphql.org/card-mode?category=graph-ql-adopter\&grouping=category}.
+    Definito per la prima volta internamente a Facebook nel 2012, oggi si presenta come uno standard capace di competere con l'architettura di tipo REST per il dialogo fra client e server.
+    \paragraph*{}
+      Caratterista fondamentale di GraphQL è la possibilità di definire uno schema che permette di modellare il formato delle query esposte e quello delle entità restituite al client, di modo che questo possa effettuare richieste personalizzate, ad un singolo endpoint e vedersi restituire dati già tipizzati.
+      Le entità sono definite da campi tipizzati e relazioni con altre entità, la struttura del dominio delle interrogazioni gestibili dal server è strutturata come un grafo.
+    \paragraph*{}
+      Le possibilità offerte dallo standard però non si limitano alla comunicazione fra client e server: essendo i campi delle entità tipizzati, ed avendo lo standard un concetto di introspection, è possibile usare 
+      schemi GraphQL anche per definire lo strato del model.
+      Questa possibilità rende quindi l'impiego di questo standard potenzialmente adatto per lo sviluppo Model Driven, potendo generare in modo automatizzato il codice applicativo che si occuperà di interfacciarsi con le strutture definite nello schema GraphQL.
+    \paragraph*{}
+      \textbf{Twinlogix S.r.l}, azienda di Santarcangelo di Romagna, recentemente espansa anche a Cesena, ha seguito con interesse la maturazione dello standard GraphQL e in questo momento sta ponendo fra gli obiettivi interni il passaggio completo da API Rest a GraphQL.
+    \paragraph*{}
+      Fra le sue occupazioni ci sono lo sviluppo di sistemi software in ambiente Web e Mobile e nel 2013, ha fatto nascere anche un'altra azienda imparentata: \emph{Cassanova}.
+      Questa offre come prodotto di punta \emph{CassaInCloud}, sistema software per attività commerciali in grado di fornire diversi servizi, dalla gestione dei turni all'e-commerce.
+    \paragraph*{}
+      Fra gli altri obiettivi interni dell'azienda c'è anche quello di aggiornare le tecnologie di generazione di codice sviluppate in passato, realizzate con tecnologie proprietarie, dalla documentazione, supporto e diffusione limitati.
+    \paragraph*{}
+      GraphQL risulta un'ottima soluzione per affrontare anche quest'ultimo argomento: come verrà discusso in seguito, lo standard si presta facilmente alla descrizione di modelli da generare automaticamente.
+    \paragraph*{}
+      Twinlogix ha quindi deciso di sfruttare questa potenzialità per realizzare un generatore di codice che, basandosi sullo schema, costruisca definizioni di modelli per database.
+      Per poter interagire con questi modelli, il generatore deve anche generare i DAO necessari.
+      A tal scopo, l'azienda sta lavorando anche alla scrittura di un DAO generico e metodi per interagirci indipendenti dal tipo dell'oggetto richiesto e dal database sottostante.
+      È stato già scritto un primo prototipo di questo DAO e del generatore indirizzato a database MongoDB.
+      Obiettivi dell'attività di seguito discussa sono stati quindi:
+      \begin{itemize}
+        \item studiare le tecnologie necessarie per lo svolgimento dell'attività;
+        \item analizzare l'architettura del DAO e i prototipi sviluppati dall'azienda;
+        \item progettare e implementare una prima versione versione del DAO generico e del generatore che, sfruttando librerie ORM, potesse interfacciarsi con database SQL.
+      \end{itemize}
     \renewcommand\section{\@startsection{section}{1}{\z@}%
     {-3.5ex \@plus -1ex \@minus -.2ex}%
     {2.3ex \@plus.2ex}%
@@ -58,7 +69,7 @@
   \newpage
   \listoffigures
   \addcontentsline{toc}{chapter}{Elenco delle figure}
-  \chapter{Contesto e Tecnologie}
+  \chapter{Contesto tecnologico}
     \section{Model Driven Programming}
       Lo sviluppo "Model Driven" è un approccio all'ingegneria del software orientato alla definizione di modelli piuttosto che di software.
       \paragraph*{}
@@ -113,66 +124,85 @@
     \section{GraphQL}
       Ideato da Facebook nel 2012, il linguaggio GraphQL è stato successivamente pubblicato in maniera open source e, dal 2018, è gestito come standard dalla GraphQL Foundation.
       Nasce con il duplice scopo di modellare entità collegate fra di loro da relazioni e di fornire una soluzione a noti problemi dell'approccio RESTful, architettura per la comunicazione client server prevalente nello sviluppo in ambito web.
+      \subsection{Tipi di base}
       Il linguaggio di GraphQL permette di definire uno schema costituito dai tipi:
-      \paragraph*{Oggetto} Nodi che rappresentano la struttura delle entità gestite dall'applicativo.
-      \begin{Verbatim}[samepage=true]
-        type Address {
-          street: String
-          city: String
-          country(continent: Continent): Country!
-        }
-      \end{Verbatim}
-      \paragraph*{}
-      Esempio di tipo oggetto: è definito un oggetto nominato "Address" con tre proprietà tipizzate.
-      Il nodo contiene due valori scalari ("street" e "city"), mentre la proprietà "country", di tipo oggetto; questo indica che esiste un collegamento fra il nodo Address e quello Country. Si nota anche come le proprietà possano ricevere dei parametri in input.
-      \paragraph*{Query e mutazioni} richieste che il client può effettuare al server, rappresentano i punti d'ingresso (dopo il nodo root, implicitamente usato) nel grafo. Le \emph{query} rappresentano operazioni di lettura, mentre le \emph{mutations} quelle di modifica.
-      \begin{Verbatim}[samepage=true]
-        schema {
-          query: Query
-          mutation: Mutation
-        }
-      \end{Verbatim}
-      Definizione delle keyword \emph{query} e \emph{mutation}.
-      \begin{Verbatim}[samepage=true]
-        type Query {
-          address(continent: Continent): Character
-          user(id: ID!): User
-        }
-      \end{Verbatim}
-      Esempio di definizione delle query esposte.
-      \paragraph*{}
-      Quando un client contatta un server GraphQL, può fornire come parametri di richiesta una operazione di query o mutazione fra quelle definite nello schema specificandone la forma dell'output.
-      Le immagini successive mostrano un esempio di comunicazione con un server GraphQL in contrasto ad uno che implementa l'API REST.
-      \begin{figure}[H]
-        \includegraphics[width=\textwidth]{rest-communication.png}
-        \caption{Esempio di comunicazione con server REST.}
-        \source{\href{https://www.howtoGraphQL.com/basics/1-GraphQL-is-the-better-rest/}{www.howtographql.com}}
-      \end{figure}
-      \begin{figure}[H]
-        \includegraphics[width=\textwidth]{graphql-communication.png}
-        \caption{Esempio di comunicazione con server GraphQL.}
-        \source{\href{https://www.howtoGraphQL.com/basics/1-GraphQL-is-the-better-rest/}{www.howtographql.com}}
-      \end{figure}
-      \paragraph*{}Si nota quindi che l'utilizzo di GraphQL permette di risolvere alcuni problemi dell'approccio REST:
-      \paragraph*{Overfetching e underfetching} 
-        Ovvero il fatto che, essendo il formato delle risposte del server fisso, il client spesso riceve più (o meno) informazioni di quelle necessarie.
-        Nel caso in cui ne riceva meno, la cosa comporta anche la necessità di effettuare altre richieste al server per ricevere i dati necessari.
-        Come si può notare dalle immagini di esempio, in una richiesta GraphQL è il client a specificare esattamente il formato della risposta.
-      \paragraph*{Multipli endpoint}
-        Lo schema GraphQL indica un solo punto d'ingresso, il nodo root; da quello si può accedere alle varie query e mutazioni.
-        Il fatto che ci sia un solo punto d'ingresso significa che per il client basterà contattare un unico endpoint per ricevere tutte le informazioni di cui ha bisogno.
-        Questo è evidenziato nell'immagine di esempio di comunicazione con server REST: il client ha dovuto contattare tre endpoint differenti.
-      \paragraph*{Modifiche all'API}
-        Il fatto che in un'architettura REST sia il server a dover definire il formato dei risultati di una chiamata comporta che l'API di back-end debba essere modificata spesso per riflettere i cambiamenti nell'interfaccia front-end, se non si vuole
-        incorrere in fenomeni di over o underfetching.
-        Lo standard GraphQL permette quindi una più rapida produzione di applicazioni e un'API back-end più stabile.
-      \paragraph*{Interpretazione dell'output}
-        Essendo i campi dei nodi GraphQL tipizzati, i tipi della risposta di un server GraphQL sono inequivocabili: questo facilita la comprensione dell'output di una richiesta.
-        Lo standard GraphQL supporta anche il concetto di \emph{introspection}: questo permette, anche senza avere accesso allo schema, di scoprire le query e i formati dei dati.
-        Una soluzione REST prevede invece la scrittura e il mantenimento di una documentazione a riguardo.
-      \paragraph*{}
-        Oltre a fornire uno standard robusto per la comunicazione client server, GraphQL può essere usato come linguaggio per definire modelli: sono infatti già disponibili servizi di generazione di codice basata su schemi GraphQL.
-        Quello utilizzato in questo caso è \emph{GraphQL Code Generator}\footnote{https://graphql-code-generator.com/}.
+        \paragraph*{Oggetto} 
+          Nodi che rappresentano la struttura delle entità gestite dall'applicativo.
+        \paragraph*{}
+          Esempio di tipo oggetto: è definito un oggetto nominato "Address" con tre proprietà tipizzate.
+          \begin{Verbatim}[samepage=true]
+            type Address {
+              street: String
+              city: String
+              country(continent: Continent): Country!
+            }
+          \end{Verbatim}
+          Il nodo contiene due valori scalari ("street" e "city"), mentre la proprietà "country", di tipo oggetto; questo indica che esiste un collegamento fra il nodo Address e quello Country. Si nota anche come le proprietà possano ricevere dei parametri in input.
+        \paragraph*{Query e mutazioni} 
+          richieste che il client può effettuare al server, rappresentano i punti d'ingresso (dopo il nodo root, implicitamente usato) nel grafo. Le \emph{query} rappresentano operazioni di lettura, mentre le \emph{mutations} quelle di modifica.
+          Definizione delle keyword \emph{query} e \emph{mutation}:
+          \begin{Verbatim}[samepage=true]
+            schema {
+              query: Query
+              mutation: Mutation
+            }
+          \end{Verbatim}
+        \paragraph*{}
+          Esempio di definizione delle query esposte:
+          \begin{Verbatim}[samepage=true]
+            type Query {
+              address(continent: Continent): Character
+              user(id: ID!): User
+            }
+          \end{Verbatim}
+      \subsection{Direttive}
+        Per personalizzare ulteriormente l'espressività dello schema, lo standard GraphQL supporta anche l'uso di \emph{direttive}, parole chiave definite nello schema e precedute dal carattere "\emph{@}".
+        Le direttive possono avere anche degli attributi, di seguito sono mostrati esempi di definizioni e utilizzo di direttive di schema:
+        \begin{Verbatim}[samepage=true]
+          directive @id(auto: Boolean) on FIELD_DEFINITION
+          directive @ref(from: String!, to: String) on FIELD_DEFINITION
+          directive @entity on INTERFACE | OBJECT | FIELD_DEFINITION
+
+          type MyType @exclude {
+            id: ID! @id,
+            field: String @ref(from: "OtherType") 
+          }
+        \end{Verbatim}
+        In questo esempio vengono definite tre direttive, di cui le prime due applicabili solamente su campi, mentre l'ultima anche su tipi oggetti e interfacce.
+        È da notare anche che tutti gli attributi di queste direttive sono opzionali, tranne quello \emph{refFrom} della direttiva \emph{foreignRef}, segnalato con un punto esclamativo dopo il tipo.
+      \subsection{Comunicazione con il server}
+        Quando un client contatta un server GraphQL, può fornire come parametri di richiesta una operazione di query o mutazione fra quelle definite nello schema specificandone la forma dell'output.
+        Le immagini successive mostrano un esempio di comunicazione con un server GraphQL in contrasto ad uno che implementa l'API REST.
+        \begin{figure}[H]
+          \includegraphics[width=\textwidth]{rest-communication.png}
+          \caption{Esempio di comunicazione con server REST.}
+          \source{\href{https://www.howtoGraphQL.com/basics/1-GraphQL-is-the-better-rest/}{www.howtographql.com}}
+        \end{figure}
+        \begin{figure}[H]
+          \includegraphics[width=\textwidth]{graphql-communication.png}
+          \caption{Esempio di comunicazione con server GraphQL.}
+          \source{\href{https://www.howtoGraphQL.com/basics/1-GraphQL-is-the-better-rest/}{www.howtographql.com}}
+        \end{figure}
+        \paragraph*{}Si nota quindi che l'utilizzo di GraphQL permette di risolvere alcuni problemi dell'approccio REST:
+        \paragraph*{Overfetching e underfetching} 
+          Ovvero il fatto che, essendo il formato delle risposte del server fisso, il client spesso riceve più (o meno) informazioni di quelle necessarie.
+          Nel caso in cui ne riceva meno, la cosa comporta anche la necessità di effettuare altre richieste al server per ricevere i dati necessari.
+          Come si può notare dalle immagini di esempio, in una richiesta GraphQL è il client a specificare esattamente il formato della risposta.
+        \paragraph*{Multipli endpoint}
+          Lo schema GraphQL indica un solo punto d'ingresso, il nodo root; da quello si può accedere alle varie query e mutazioni.
+          Il fatto che ci sia un solo punto d'ingresso significa che per il client basterà contattare un unico endpoint per ricevere tutte le informazioni di cui ha bisogno.
+          Questo è evidenziato nell'immagine di esempio di comunicazione con server REST: il client ha dovuto contattare tre endpoint differenti.
+        \paragraph*{Modifiche all'API}
+          Il fatto che in un'architettura REST sia il server a dover definire il formato dei risultati di una chiamata comporta che l'API di back-end debba essere modificata spesso per riflettere i cambiamenti nell'interfaccia front-end, se non si vuole
+          incorrere in fenomeni di over o underfetching.
+          Lo standard GraphQL permette quindi una più rapida produzione di applicazioni e un'API back-end più stabile.
+        \paragraph*{Interpretazione dell'output}
+          Essendo i campi dei nodi GraphQL tipizzati, i tipi della risposta di un server GraphQL sono inequivocabili: questo facilita la comprensione dell'output di una richiesta.
+          Lo standard GraphQL supporta anche il concetto di \emph{introspection}: questo permette, anche senza avere accesso allo schema, di scoprire le query e i formati dei dati.
+          Una soluzione REST prevede invece la scrittura e il mantenimento di una documentazione a riguardo.
+        \paragraph*{}
+          Oltre a fornire uno standard robusto per la comunicazione client server, GraphQL può essere usato come linguaggio per definire modelli: sono infatti già disponibili servizi di generazione di codice basata su schemi GraphQL.
+          Quello utilizzato in questo caso è \emph{GraphQL Code Generator}\footnote{https://graphql-code-generator.com/}.
       \newpage
     \section{GraphQL code generator}
       GraphQL code generator è un tool CLI open source in grado di analizzare uno schema GraphQL e, tramite plugins, generare codice su diversi file.
@@ -268,98 +298,125 @@
        I metodi di tipo \emph{has} aggiungono una associazione nel model invocante il metodo (\emph{source}) e un attributo che fungerà da \emph{foreign key} nella model passato come parametro (\emph{target}).
        I metodi di tipo \emph{belongsTo} invece aggiungono sia l'associazione che la foreign key nel target.
   \newpage
-  \chapter{Requisiti}
-    \section{Requisiti funzionali}
+  \chapter{Analisi}
+    \section{Scopo dell'applicazione}
+      Oltre ad essere impiegati per il rinnovo delle strutture dell'API di Cassanova, gli strumenti di generazione aziendali stanno venendo progettati per essere uno strumento generale per la generazione di strutture per DB e comunicazione con esse.
+      Il dominio applicativo si estenderebbe quindi non solo a sviluppi di API interne, ma anche ad una qualsiasi richiesta di un cliente.
+      \paragraph*{}
+      Per esempio, nel caso di una applicazione di e-commerce personalizzata, le varie entità di dominio di questa (come gli utenti, i punti vendita\dots) potrebbero essere modellate agilmente su uno schema GraphQL.
+      Un utente potrebbe essere definito come:
+      \begin{Verbatim}[samepage=true]
+        type User {
+          id: ID!
+          name: String!
+        }
+      \end{Verbatim}
+      \paragraph*{}
+      Lo strumento di generazione dovrebbe quindi decidere se generare un tipo adeguato e, nel caso, definire:
       \begin{itemize}
-        \item il sistema deve potersi interfacciare con un database SQL, traducendo le query dal formato aziendale a SQL.
-        \item il sistema sviluppato deve essere in grado di tradurre uno schema GraphQL in formato tabellare, in particolare:
+        \item un modello per il database scelto per contenere il tipo User;
+        \item un DAO per gestire le operazioni sugli Users salvati nel database. Si nota che il DTO User verrà generato da un plugin di base per GraphQL Code Generator;
+        \item un tipo per modellare i filtri sugli attributi del tipo User;
+        \item un tipo per definre gli ordinamenti sugli attributi del tipo User;
+        \item un tipo per definire le proiezioni degli attributi del tipo User;
+      \end{itemize}
+      E così per ogni tipo da generare definito nello schema.
+    \section{Architettura del protipo}
+      Una parte importante del processo di analisi è stata quella di comprendere la struttura del prototipo scritto dall'azienda: ad una prima fase di studio individuale è seguito un confronto diretto con il referente aziendale per chiarire eventuali dubbi.
+      \paragraph*{}
+      L'interazione con lo strato del database è gestita tramite il pattern di programmazione Data Access Object (DAO).
+      Il pattern DAO è una strategia impiegata per separare lo strato funzionale di un'applicazione da quello di persistenza dei dati: permette quindi di sviluppare il lato applicativo senza avere conoscenza di come i dati vengano effettivamente gestiti, così come poter modificare la gestione dei dati
+      senza dover effettuare modifiche al lato applicativo, a patto che le interfacce rimangano inalterate.
+      \paragraph*{}
+      Il pattern prevede la definizione di un'interfaccia di alto livello che definisce i metodi di lettura e scrittura su un particolare tipo di oggetto, l'implementazione di questa e dell'oggetto, detto "Data Transfer Object", che non è altro che un'entità sulla quale mappare i dati custoditi nel DataBase.
+      \begin{figure}[H]
+        \includegraphics[width=\textwidth]{dao_pattern_uml_diagram.jpg}
+        \caption{Esempio di pattern DAO.}
+        \source{\href{https://www.tutorialspoint.com/design_pattern/images/dao_pattern_uml_diagram.jpg}{www.tutorialspoint.com}}
+      \end{figure}
+      \paragraph*{}
+      L'esempio sopra mostrato descrive un caso nel quale l'applicazione \emph{DaoPatternDemo} utilizza un oggetto implementante l'interfaccia \emph{StudentDao} per ottenere oggetti (DTO) di tipo \emph{Studenti}.
+      Come il dao recupererà i dati non è rilevante per DaoPatterDemo: si è quindi liberi di modificare l'implementazione di StudentDao.
+      \paragraph*{}
+      Il progetto però punta a generare dei DAO per oggetti che verranno a loro volta generati in futuro: non è quindi possibile definire DTO e tanto meno interfacce e metodi personalizzati per gestirli.
+      Si potrebbero supportare solo operazioni estremamente generiche, come "elenca tutte i record", "elimina tutti i record", "estrai l'n-esimo record"\dots.
+      \paragraph*{}
+      Per superare questa limitazione, l'azienda ha deciso di sfruttare il supporto che Typescript offre per i tipi generici: le interfacce della libreria puntano a definire un DAO generico adatto ad ogni tipo di DTO.
+      \begin{figure}[H]
+        \includegraphics[width=\textwidth]{prototype-architecture.png}
+        \caption{Architettura dei principali componenti del prototipo aziendale.}
+      \end{figure}
+      \paragraph*{}
+      L'entità DAO alla base della libreria è l'interfaccia \emph{ReadDAO}: oltre a definire metodi per la ricerca, l'interfaccia specifica anche le firme per quelli che servono a gestire le \emph{associazioni}.
+      \paragraph*{}
+      Viene infatti definito un meccanismo di associazioni tra DAO indipendente dal database sottostante, così da poter implementare associazioni fra i vari tipi dello schema GraphQL anche in database non relazionali.
+      \paragraph*{}
+      Le associazioni, oltre all'implementazione dei metodi per gestirle, sono contenute nel classe astratta \emph{AbstractReadDAO}.
+      I metodi di lettura invece sono implementati come template methods.
+      \paragraph*{}
+      La struttura principale delle associazioni fra DAO è la seguente:
+      \begin{Verbatim}[samepage=true]
+        type DAOAssociation = {
+          type: DAOAssociationType,
+          reference: DAOAssociationReference,
+          field: string,
+          refFrom: string,
+          refTo: string,
+          dao: string,
+          ...
+        }
+      \end{Verbatim}
+      \begin{itemize}
+        \item I campi \emph{type} e \emph{reference} indicano se l'associazione è di tipo \emph{foreign/inner} e \emph{uno a molti/uno a uno};
+        \item \emph{field} indica il nome del campo che andrà risolto come associazione
+        \item \emph{refFrom} e refTo sono i nomi dei campi che fungono da chiavi per la relazione
+        \item \emph{dao} è il nome del DAO associato
+      \end{itemize}
+      \paragraph*{}
+      Quando un campo con nome uguale al parametro \emph{field} viene ricercato nel DAO che contiene l'associazione, prima viene risolta l'operazione di ricerca sul DAO interrogato, dopodiché
+      viene effettuata una lettura anche sul DAO associato al campo \emph{field} tramite il metodo \emph{load}, definito (ma non mostrato nello schema) nell'interfaccia ReadDAO.
+      \paragraph*{}
+      L'interfaccia \emph{DAO} estende l'interfaccia ReadDAO e completa il set di operazioni aggiungendo la definizione dei metodi di scrittura (insert, update, replace\dots).
+      La sua implementazione astratta si limita a definire questi metodi come template methods.
+      \paragraph*{}
+      I parametri dei metodi di lettura e scrittura sono principalmente tre: \emph{filtri}, \emph{ordinamenti} e \emph{proiezioni}.
+      Poiché il DAO deve operare su qualsiasi tipo di DTO, la struttura di questi tre parametri verrà generata durante il processo di generazione del codice e i loro tipi
+      verranno passati fra i parametri generici del DAO generato.
+      \paragraph*{}
+      La classe \emph{AbstractDAO} dovrà essere poi implementata da classi astratte dedicate per ogni tipo di DB sottostante: l'azienda ha già definito ed implementato la classe \emph{AbstractMongooseDAO} per gestire la comunicazione con un database MongoDB.
+      \paragraph*{}
+      Durante il processo di generazione del codice vengono quindi generate varie implementazioni di questa classe astratta, una per ogni DTO da gestire.
+      \paragraph*{}
+      Ultimo componente della libreria è la classe \emph{AbstractDAOContext}. Questa si occupa principalmente di contenere istanze di tutti i DAO dell'applicazione e di inizializzarli.
+      Come mostrato precedentemente nello schema, ogni DAO possiede un riferimento al DAOContext, così che, tramite questo, ogni DAO possa comunicare con gli altri (per esempio per risolvere associazioni).
+    \section{Requisiti}
+      Lo scopo di questa tesi è quello di ampliare le capacità del prototipo aziendale, rendendo possibile generare anche modelli per database SQL.
+      Confrontandomi con il referente aziendale, sono stati individuati i seguenti requisiti:
+      \subsection{Requisiti funzionali}
         \begin{itemize}
-          \item deve poter generare tabelle SQL ed opportune relazioni basate sui tipi definiti in uno schema GraphQL, particolare attenzione viene posta su tipi dalle caratteristiche più complesse, quali:
+          \item il sistema deve potersi interfacciare con un database SQL, traducendo le query dal formato aziendale a SQL.
+          \item il sistema sviluppato deve essere in grado di tradurre uno schema GraphQL in formato tabellare, in particolare:
           \begin{itemize}
-            \item tipi con composizioni, nel caso un tipo GraphQL ne comprenda altri fra i suoi campi;
-            \item tipi associati ad altri tipi tramite direttive sullo schema GraphQL;
-            \item ereditarietà fra interfacce e tipi che le implementano.
+            \item deve poter generare tabelle SQL ed opportune relazioni basate sui tipi definiti in uno schema GraphQL, particolare attenzione viene posta su tipi dalle caratteristiche più complesse, quali:
+            \begin{itemize}
+              \item tipi con composizioni, nel caso un tipo GraphQL ne comprenda altri fra i suoi campi;
+              \item tipi associati ad altri tipi tramite direttive sullo schema GraphQL;
+              \item ereditarietà fra interfacce e tipi che le implementano.
+            \end{itemize}
+            \item deve poter generare DAO per gestire la lettura/scrittura sulle tabelle generate;
+            \item deve poter generare tipi di supporto, come filtri, proiezioni e ordinamenti, personalizzati per ogni DAO;
           \end{itemize}
-          \item deve poter generare DAO per gestire la lettura/scrittura sulle tabelle generate;
-          \item deve poter generare tipi di supporto, come filtri, proiezioni e ordinamenti, personalizzati per ogni DAO;
+          \item il sistema deve poter supportare tipi di dato personalizzati nei campi dei tipi;
         \end{itemize}
-        \item il sistema deve poter supportare tipi di dato personalizzati nei campi dei tipi;
-      \end{itemize}
-    \section{Requisiti non funzionali}
-      \begin{itemize}
-        \item la comunicazione con il database e la traduzione delle query devono essere implementate utilizzando la libreria Sequelize;
-        \item l'interazione con i DAO deve essere quanto più vicina a quella della versione per MongoDB, per non dover modificare la parte comune della libreria;
-        \item lo schema GraphQL per generare il codice deve essere quanto più simile a quello per la versione MongoDB. Si possono invece modificare liberamente le direttive aggiuntive usate nello schema;
-        \item il sistema non deve creare un overhead eccessivo per la risoluzione delle operazioni.
-      \end{itemize}
-  \newpage  
-  \chapter{Architettura del prototipo}
-    L'interazione con lo strato del database è gestita tramite il pattern di programmazione Data Access Object (DAO).
-    Il pattern DAO è una strategia impiegata per separare lo strato funzionale di un'applicazione da quello di persistenza dei dati: permette quindi di sviluppare il lato applicativo senza avere conoscenza di come i dati vengano effettivamente gestiti, così come poter modificare la gestione dei dati
-    senza dover effettuare modifiche al lato applicativo, a patto che le interfacce rimangano inalterate.
-    \paragraph*{}
-    Il pattern prevede la definizione di un'interfaccia di alto livello che definisce i metodi di lettura e scrittura su un particolare tipo di oggetto, l'implementazione di questa e dell'oggetto, detto "Data Transfer Object", che non è altro che un'entità sulla quale mappare i dati custoditi nel DataBase.
-    \begin{figure}[H]
-      \includegraphics[width=\textwidth]{dao_pattern_uml_diagram.jpg}
-      \caption{Esempio di pattern DAO.}
-      \source{\href{https://www.tutorialspoint.com/design_pattern/images/dao_pattern_uml_diagram.jpg}{www.tutorialspoint.com}}
-    \end{figure}
-    \paragraph*{}
-    L'esempio sopra mostrato descrive un caso nel quale l'applicazione \emph{DaoPatternDemo} utilizza un oggetto implementante l'interfaccia \emph{StudentDao} per ottenere oggetti (DTO) di tipo \emph{Studenti}.
-    Come il dao recupererà i dati non è rilevante per DaoPatterDemo: si è quindi liberi di modificare l'implementazione di StudentDao.
-    \paragraph*{}
-    Il progetto però punta a generare dei DAO per oggetti che verranno a loro volta generati in futuro: non è quindi possibile definire DTO e tanto meno interfacce e metodi personalizzati per gestirli.
-    Si potrebbero supportare solo operazioni estremamente generiche, come "elenca tutte i record", "elimina tutti i record", "estrai l'n-esimo record"\dots.
-    \paragraph*{}
-    Per superare questa limitazione, l'azienda ha deciso di sfruttare il supporto che Typescript offre per i tipi generici: le interfacce della libreria puntano a definire un DAO generico adatto ad ogni tipo di DTO.
-    \begin{figure}[H]
-      \includegraphics[width=\textwidth]{prototype-architecture.png}
-      \caption{Architettura dei principali componenti del prototipo aziendale.}
-    \end{figure}
-    \paragraph*{}
-    L'entità DAO alla base della libreria è l'interfaccia \emph{ReadDAO}: oltre a definire metodi per la ricerca, l'interfaccia specifica anche le firme per quelli che servono a gestire le \emph{associazioni}.
-    \paragraph*{}
-    Viene infatti definito un meccanismo di associazioni tra DAO indipendente dal database sottostante, così da poter implementare associazioni fra i vari tipi dello schema GraphQL anche in database non relazionali.
-    \paragraph*{}
-    Le associazioni, oltre all'implementazione dei metodi per gestirle, sono contenute nel classe astratta \emph{AbstractReadDAO}.
-    I metodi di lettura invece sono implementati come template methods.
-    \paragraph*{}
-    La struttura principale delle associazioni fra DAO è la seguente:
-    \begin{Verbatim}[samepage=true]
-      type DAOAssociation = {
-        type: DAOAssociationType,
-        reference: DAOAssociationReference,
-        field: string,
-        refFrom: string,
-        refTo: string,
-        dao: string,
-        ...
-      }
-    \end{Verbatim}
-    \begin{itemize}
-      \item I campi \emph{type} e \emph{reference} indicano se l'associazione è di tipo \emph{foreign/inner} e \emph{uno a molti/uno a uno};
-      \item \emph{field} indica il nome del campo che andrà risolto come associazione
-      \item \emph{refFrom} e refTo sono i nomi dei campi che fungono da chiavi per la relazione
-      \item \emph{dao} è il nome del DAO associato
-    \end{itemize}
-    \paragraph*{}
-    Quando un campo con nome uguale al parametro \emph{field} viene ricercato nel DAO che contiene l'associazione, prima viene risolta l'operazione di ricerca sul DAO interrogato, dopodiché
-    viene effettuata una lettura anche sul DAO associato al campo \emph{field} tramite il metodo \emph{load}, definito (ma non mostrato nello schema) nell'interfaccia ReadDAO.
-    \paragraph*{}
-    L'interfaccia \emph{DAO} estende l'interfaccia ReadDAO e completa il set di operazioni aggiungendo la definizione dei metodi di scrittura (insert, update, replace\dots).
-    La sua implementazione astratta si limita a definire questi metodi come template methods.
-    \paragraph*{}
-    I parametri dei metodi di lettura e scrittura sono principalmente tre: \emph{filtri}, \emph{ordinamenti} e \emph{proiezioni}.
-    Poiché il DAO deve operare su qualsiasi tipo di DTO, la struttura di questi tre parametri verrà generata durante il processo di generazione del codice e i loro tipi
-    verranno passati fra i parametri generici del DAO generato.
-    \paragraph*{}
-    La classe \emph{AbstractDAO} dovrà essere poi implementata da classi astratte dedicate per ogni tipo di DB sottostante: l'azienda ha già definito ed implementato la classe \emph{AbstractMongooseDAO} per gestire la comunicazione con un database MongoDB.
-    \paragraph*{}
-    Durante il processo di generazione del codice vengono quindi generate varie implementazioni di questa classe astratta, una per ogni DTO da gestire.
-    \paragraph*{}
-    Ultimo componente della libreria è la classe \emph{AbstractDAOContext}. Questa si occupa principalmente di contenere istanze di tutti i DAO dell'applicazione e di inizializzarli.
-    Come mostrato precedentemente nello schema, ogni DAO possiede un riferimento al DAOContext, così che, tramite questo, ogni DAO possa comunicare con gli altri (per esempio per risolvere associazioni).
+      \subsection{Requisiti non funzionali}
+        \begin{itemize}
+          \item la comunicazione con il database e la traduzione delle query devono essere implementate utilizzando la libreria Sequelize;
+          \item l'interazione con i DAO deve essere quanto più vicina a quella della versione per MongoDB, per non dover modificare la parte comune della libreria;
+          \item lo schema GraphQL per generare il codice deve essere quanto più simile a quello per la versione MongoDB. Si possono invece modificare liberamente le direttive aggiuntive usate nello schema;
+          \item il sistema non deve creare un overhead eccessivo per la risoluzione delle operazioni.
+        \end{itemize}
   \newpage
+  
   \chapter{Sviluppo del DAO}
     \paragraph*{}
     Le problematiche maggiori della fase di implementazione del DAO astratto sono scaturite dalle differenze fra database di tipo documentale (come MongoDB) e database SQL.
