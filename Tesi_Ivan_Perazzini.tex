@@ -32,10 +32,10 @@
   \hyphenation{ON-DELETE GraphQL AbstractMongooseDAO}
   \section{Introduzione}
     \paragraph*{}
-      La storia dello standard \emph{JSON}, i database documentali e la necessità di sviluppare tecnologie per interagire con questi devono in buona parte la loro diffusione al mondo dello sviluppo Web.
+      La storia dello standard \emph{JSON}, dei database documentali e la necessità di sviluppare tecnologie per interagirci devono in buona parte la loro diffusione al mondo dello sviluppo Web.
       Sin dagli anni novanta infatti, nel mercato dei web browser, era presente il bisogno di creare pagine più dinamiche e interagibili; a questo scopo fu sviluppato \emph{JavaScript}, linguaggio di scripting per browser capace di interagire con la struttura delle pagine ed inviare richieste ad altre macchine.
     \paragraph*{}
-      Con lo sviluppo di applicazioni web sempre più complesse, l'industria si è trovata davanti al problema di dover trasferire fra front-end e server informazioni su oggetti sempre più complicati.
+      Con lo sviluppo di applicazioni web sempre più ricche dal punto di vista visuale, l'industria si è trovata davanti al problema di dover trasferire fra front-end e server informazioni su oggetti dalla crescente complessità.
       È per questo che, in modo indipendente, nei primi anni duemila si diffusero tecniche di trasferimento di oggetti tramite HTTP utilizzando la notazione per gli oggetti \emph{literal} del linguaggio JavaScript.
       Queste tecniche, nate in modo spontaneo e scoordinato, vennero poi condensate e definite nello standard JSON per la rappresentazione di oggetti.
       Il JSON oggi è diffuso in qualsiasi applicazione Web, vista la facilità di interpretazione del suo formato, supportato da molti linguaggi, fra cui ovviamente il JavaScript.
@@ -44,20 +44,20 @@
     \paragraph*{}
       I database relazionali documentali incorrono però in due importanti limiti:
       \begin{itemize}
-        \item Mentre le relazioni "in verticale" (gerarchie) sono rappresentabili, i documenti non supportano quelle fra documenti diversi. Non è infatti presente di basi un meccanismo simile a quello delle chiavi per SQL.
-        \item Non è mai stato definito o adottato un linguaggio di interrogazione e modifica unificato per i database documentali 
+        \item Mentre le relazioni "in verticale" (gerarchie) sono rappresentabili, i documenti non supportano quelle fra documenti diversi. Non è infatti presente di norma un meccanismo simile a quello delle chiavi per SQL.
+        \item Non è mai stato definito o adottato un linguaggio di interrogazione e modifica unificato per i database documentali.
       \end{itemize}
     \paragraph*{}
-      Per questo Facebook, attorno al 2012, decise di iniziare a sviluppare \emph{GrapQL}, un linguaggio per API sviluppato per descrivere operazione di lettura e scrittura di dati.
+      Per questo, Facebook attorno al 2012 decise di iniziare a sviluppare \emph{GrapQL}, un linguaggio per API sviluppato per descrivere operazione di lettura e scrittura di dati.
     \paragraph*{}
-      La spinta verso la definizione di questo linguaggio è stata data da alcune necessità, anche derivate dalle limitazioni dei database documentali sopra indicate:
+      La spinta verso la definizione di questo linguaggio è stata data da alcune necessità derivate anche dalle limitazioni dei database documentali sopra indicate:
       \begin{itemize}
         \item Facebook faceva largo uso del formato JSON per il salvataggio di informazioni: cambiare l'infrastruttura sottostante sarebbe risultato troppo costoso;
-        \item i dati gestiti da Facebook, come post, utenti, commenti, reazioni\dots risultano meglio rappresentabili da database non relazionali;
-        \item allo stesso tempo, il valore di questi dati risiede nelle relazioni fra di essi (ad esempio, quali utenti sono amici di altri);
+        \item i dati gestiti da Facebook, come post, utenti, commenti e reazioni risultano meglio rappresentabili da database non relazionali;
+        \item allo stesso tempo, il valore di questi dati risiede nelle relazioni fra di essi (ad esempio, quali utenti sono amici di altri).
       \end{itemize}
     \paragraph*{}
-      Caratterista fondamentale di GraphQL è la possibilità di definire uno schema che permette di modellare il formato delle query esposte e quello delle entità restituite al client, di modo che questo possa effettuare richieste personalizzate, ad un singolo endpoint e vedersi restituire dati già tipizzati.
+      Caratterista fondamentale di GraphQL è la possibilità di definire uno schema che permette di modellare il formato delle \emph{query} esposte e quello delle \emph{entità} restituite al client, di modo che questo possa effettuare richieste personalizzate ad un singolo endpoint, ricevendo in risposta dati già tipizzati.
       Le entità sono definite da campi tipizzati e relazioni con altre entità, la struttura del dominio delle interrogazioni gestibili dal server è strutturata come un grafo.
     \paragraph*{}
       Il linguaggio, pubblicato nel 2015, è dal Novembre del 2018 uno standard\footnote{http://spec.graphql.org/} e la sua gestione è stata trasferita da Facebook alla \emph{GraphQL Foundation}, sotto l'ala della \emph{Linux Foundation}.
@@ -69,11 +69,11 @@
     \paragraph*{}
       \textbf{Twinlogix S.r.l}, azienda di Santarcangelo di Romagna, recentemente espansa anche a Cesena, ha seguito con interesse la maturazione dello standard GraphQL e in questo momento sta ponendo fra gli obiettivi interni il passaggio completo da API Rest a GraphQL.
     \paragraph*{}
-      Fra le sue occupazioni ci sono lo sviluppo di sistemi software in ambiente Web e Mobile e nel 2013, ha fatto nascere anche un'altra azienda imparentata: \emph{Cassanova}.
+      Fra le sue occupazioni ci sono lo sviluppo di sistemi software in ambiente Web e Mobile e nel 2013 ha fatto nascere anche un'altra azienda imparentata: \emph{Cassanova}.
       Questa offre come prodotto di punta \emph{CassaInCloud}, sistema software per attività commerciali in grado di fornire diversi servizi, dalla gestione dei turni all'e-commerce.
     \paragraph*{}
-      Fra gli altri obiettivi interni dell'azienda c'è anche quello di aggiornare le tecnologie di generazione di codice sviluppate in passato, realizzate con tecnologie proprietarie, dalla documentazione, supporto e diffusione limitati.
-      GraphQL risulta un'ottima soluzione per affrontare anche quest'ultimo argomento: come verrà discusso in seguito, lo standard si presta facilmente alla descrizione di modelli da generare automaticamente.
+      Fra gli altri obiettivi interni dell'azienda c'è anche quello di aggiornare le tecnologie di generazione di codice sviluppate in passato, realizzate con tecnologie proprietarie dalla documentazione, supporto e diffusione limitati.
+      Come verrà discusso in seguito, GraphQL si presta facilmente alla descrizione di modelli da generare automaticamente, pertanto risulta anche un ottimo strumento per la scrittura del nuovo generatore di codice.
     \paragraph*{}
       Twinlogix ha quindi deciso di sfruttare questa potenzialità per realizzare un generatore di codice che, basandosi sullo schema, costruisca definizioni di modelli per database.
       Per poter interagire con questi modelli, il generatore deve anche generare i DAO necessari.
@@ -119,7 +119,6 @@
         \item un progetto strutturato con modelli diventa più comprensibile anche per il cliente;
         \item in caso siano necessarie modifiche, basterà effettuarle al modello. I cambiamenti sono poi generati rapidamente e senza rischio di errori accidentali.
       \end{itemize}
-    \newpage
     \section{ORM}
       L'\emph{Object Relational Mapping} è una tecnica di programmazione creata per favorire l'interazione fra un'applicazione scritta con un approccio ad oggetti ed una base di dati di tipo relazionale, o comunque modellante tabelle tramite campi scalari semplici.
       Una libreria ORM rende quindi possibile mappare le tabelle in oggetti e viceversa, permettendo di poter operare con questi dentro l'applicazione anche quando si deve comunicare con un DB.
@@ -145,7 +144,6 @@
         \item Può produrre query sub-ottimali
       \end{itemize}
       Questi svantaggi non sono però stati ritenuti abbastanza influenti da decidere di optare per una soluzione di più basso livello.
-    \newpage
     \section{GraphQL}
       Ideato da Facebook nel 2012, il linguaggio GraphQL è stato successivamente pubblicato in maniera open source e, dal 2018, è gestito come standard dalla GraphQL Foundation.
       Nasce con il duplice scopo di modellare entità collegate fra di loro da relazioni e di fornire una soluzione a noti problemi dell'approccio RESTful, architettura per la comunicazione client server prevalente nello sviluppo in ambito web.
@@ -228,7 +226,6 @@
         \paragraph*{}
           Oltre a fornire uno standard robusto per la comunicazione client server, GraphQL può essere usato come linguaggio per definire modelli: sono infatti già disponibili servizi di generazione di codice basata su schemi GraphQL.
           Quello utilizzato in questo caso è \emph{GraphQL Code Generator}\footnote{https://graphql-code-generator.com/}.
-      \newpage
     \section{GraphQL code generator}
       GraphQL code generator è un tool CLI open source in grado di analizzare uno schema GraphQL e, tramite plugins, generare codice su diversi file.
       Il modo in cui i plugin di questo strumento operano segue il pattern di programmazione \emph{visitor}.
@@ -245,7 +242,6 @@
       \end{figure}
       \paragraph*{}È questo il meccanismo alla base di GraphQL code generator: al suo interno, ogni plugin può accedere allo schema del grafo e chiamare il metodo \emph{visit}, passando come parametro un oggetto che funga da visitor.
         Sono disponibili dei plugin predefiniti, fra cui quello, usato durante questo progetto, per generare tipi, interfacce etc... in linguaggio TypeScript.
-    \newpage
     \section{TypeScript}
       TypeScript è un linguaggio open source ideato per arricchire il linguaggio JavaScript aggiungendo i tipi statici.
       L'uso dei tipi permette la validazione del codice e, di conseguenza, uno sviluppo più fluido.
@@ -282,7 +278,6 @@
         }
       \end{Verbatim}
       In questo caso, senza la type guard, cercare di usare la proprietà "x.value" genererebbe un errore di validazione del codice, essendo x di tipo any.
-    \newpage
     \section{Sequelize}
       In accordo con l'azienda, la versione SQL è stata scritta sfruttando la libreria ORM per ambiente Node \emph{Sequelize} per l'interazione con la base di dati.
       Sequelize supporta i seguenti RDBMS:
@@ -519,7 +514,6 @@
         await DAO.user.insert(customerUser);
       \end{Verbatim}
       ed aspettarsi, interrogando successivamente il DAO di user, di ricevere in risposta il record di tipo CustomerUser con tutti i suoi attributi, anche quelli non relativi alla tabella degli Users.
-    \newpage
     \section{Risoluzione delle problematiche - alto livello}
       In un primo momento era stato ipotizzato di gestire i casi sopra descritti con delle associazioni, sfruttando il meccanismo di riferimenti già presente nel progetto dell'azienda.
       Questo approccio avrebbe però portato a dover gestire una serie di complicazioni:
@@ -574,7 +568,6 @@
       \paragraph*{}
       Per impedire modifiche parziali, le operazioni di modifica (inserimento, aggiornamento, rimozione) saranno effettuate all'interno di \emph{transazioni} SQL.
       Se per esempio si verificasse un problema nell'inserimento di una sottoclasse, la parte di record contenuta nella tabella della superclasse non dovrebbe venire salvata.
-    \newpage
     \section{Risoluzione delle problematiche - implementazione}
       Le funzioni principali del DAO astratto da implementare sono:
       \begin{itemize}
@@ -604,7 +597,6 @@
       Se un'associazione viene rilevata su un campo del parametro query, la funzione verrà richiamata sul DAO associato a quel campo. 
       Bisogna però fare attenzione al tipo di associazione: se è di tipo embedded, il DAO associato si occuperà di gestire direttamente il dato passato. Altrimenti, vuol dire che il DAO associato è una interfaccia o implementazione e potrebbe dover
       delegare nuovamente il campo ad un DAO associato in modo embedded.
-    \newpage
     \subsection{Inserimento}
       Per l'inserimento è definita una sola funzione, che accetta il record da inserire nel database ed eventuali opzioni di scrittura.
       Sequelize permette di effettuare l'operazione di inserimento passando direttamente un oggetto composto, a patto di includere le associazioni alle tabelle relative
@@ -644,7 +636,6 @@
       Ricorsivamente, nel DAO "user", viene gestito il campo associato "addresses".
       \paragraph*{}
       Nella seconda fase viene invece costruito l'oggetto delle opzioni che deve ricorsivamente indicare tutte le associazione incluse nella query.
-    \newpage
     \subsection{Ricerca}
       \subsubsection*{Interfaccia della funzione Sequelize}
         Sequelize permette di effettuare un'operazione di ricerca includendo subito uno o più modelli associati, tramite il meccanismo di Eager Loading.
@@ -767,8 +758,6 @@
           }
         \end{Verbatim}
         così da poter, rilevare, percorrendo ricorsivamente la struttura, l'associazione con il model Tool sul campo Instruments.
-        % [[Schema del processo di ricerca?]]
-    \newpage
     \subsection{Aggiornamento}
       Sono rese disponibili tre funzioni di aggiornamento: 
       \begin{itemize}
@@ -790,8 +779,6 @@
         \end{itemize}
         \item Alla fine, vengono mappati tutti i modelli da aggiornare ai loro id, per poter eseguire un'unica operazione di aggiornamento in blocco sulla tabella sfruttando come filtro la lista di id, piuttosto che chiamare la funzione di aggiornamento per ogni modello (effettuando quindi n operazioni di update).
       \end{enumerate}
-%      [[flowchart?]]
-    \newpage
     \subsection{Eliminazione}
       Le funzioni di eliminazione da implementare sono due:
       \begin{itemize}
@@ -854,7 +841,6 @@
         \item interfaces: nome delle interfacce del nodo
         \item fields: collezione contenente i campi del nodo trattato
       \end{itemize}
-      \newpage
       \paragraph*{Modulo generatore}
       Il modulo di generazione, invocato dal plugin dopo aver raccolto tutti i nodi trattati, analizza ognuno di questi e ne controlla la correttezza.
       In particolare, viene verificato che:
@@ -932,7 +918,6 @@
             };
 
           \end{Verbatim}
-        \newpage
         \subsection{Inserimento}
           \subsubsection{Entità innestate e array}
             \begin{Verbatim}[samepage=true]
@@ -964,7 +949,6 @@
             \end{itemize}
             Fra i campi di tipo oggetto ce ne sono anche alcuni a loro volta composti da oggetti.
             Si verifica, dopo l'inserimento, che tutti i campi siano esistenti e corretti.
-          \newpage
           \subsubsection{Sottoclassi}
             \begin{Verbatim}[samepage=true]
               const record = { 
@@ -980,7 +964,6 @@
             \end{Verbatim}
             Si chiama il metodo di inserimento di un DAO di tipo sottoclasse (ovvero un tipo che implementa un'interfaccia). Si verifica successivamente che sia possibile recuperare lo stesso record inserito sia interrogando il DAO dell'interfaccia che quello dell'implementazione. La prova di uguaglianza fra il record ottenuto dal DAO
             dell'interfaccia e quello dell'implementazione viene fatta su una serie di attributi, fra cui l'ID.
-          \newpage
           \paragraph{Classe con più interfacce}
             \begin{Verbatim}[samepage=true]
               let su : SubUser = {
@@ -996,7 +979,6 @@
               expect(su.id).toBe(u2?.id);
             \end{Verbatim}
             Viene inserito un record, tramite il DAO di una sottoclasse, che implementa più di una interfaccia. Successivamente si controlla che interrogare il DAO utilizzato o quello delle sue interfacce porti a recuperare lo stesso record.
-          \newpage
         \subsection{Aggiornamento}
           \paragraph{Aggiornamento di entità innestate}
             \begin{Verbatim}[samepage=true]
@@ -1023,7 +1005,6 @@
             Vengono inseriti dei records con oggetti innestati e array e poi, sempre sullo lo stesso DAO dell'inserimento, viene chiamata la funzione di aggiornamento, indicando che si vogliono aggiornare solo alcuni dei record aggiunti utilizzando il parametro di tipo filtro.
             I cambiamenti indicati vanno a definire aggiornamenti sia su array che su oggetti, incluso l'aggiornamento di parametri di oggetti innestati dentro oggetti innestati.
             Successivamente si contano i record che sono stati correttamente aggiornati.
-          \newpage
           \paragraph{Aggiornamento di sottoclassi}
             \begin{Verbatim}[samepage=true]
               let user = await dao.subUser
@@ -1039,7 +1020,6 @@
             \end{Verbatim}
             Viene inserito un record di tipo "sottoclasse" e poi lo si aggiorna.
             Fra i campi aggiornati ce ne sono anche di appartenenti all'interfaccia implementata dal record.
-          \newpage
         \subsection{Sostituzione}
           \paragraph{Sostituzione di superclasse con sottoclassi}
             \begin{Verbatim}[samepage=true]
@@ -1066,7 +1046,6 @@
             Viene inserito un record tramite il DAO della superclasse, poi sostituito con un oggetto di tipo "sottoclasse1".
             Dopodiché, tramite una ricerca per ID, si accede al nuovo record e ne si controlla il tipo, che deve quindi essere diventato "sottoclasse1".
             Si sostituisce nuovamente il nuovo record con uno di tipo "sottoclasse2" e si ripete la prova.
-        \newpage
         \subsection{Eliminazione}
           \paragraph{Eliminazione di classe con più superclassi}
             \begin{Verbatim}[samepage=true]
@@ -1085,7 +1064,6 @@
             Vengono inseriti records di tipo "sottoclasse1" (che implementa due interfacce) e successivamente li si eliminano chiamando la funzione di eliminazione sul DAO di "sottoclasse1".
             Fra i parametri del filtro di eliminazione sono inseriti anche attributi appartenenti ad una delle due interfacce.
             Si verifica poi, tramite una ricerca sul dao della seconda interfaccia, che siano stati correttamente eliminati tutti i records.
-      \newpage
       \section{Limiti dell'implementazione proposta}
         Le associazioni salvate nella lista "sequelizeAssociations" di un Dao sono identificate solo tramite il nome di un campo, pertanto non è possibile gestire il caso in cui un DAO abbia più relazioni basate su campi con lo stesso nome.
         È questo per esempio il caso di una interfaccia implementata da due implementazioni (o viceversa) che condividono un campo dal nome uguale ma non presente nell'interfaccia: il DAO dell'interfaccia potrà avere una sola sequelizeAssociation basata sul campo condiviso dalle due interfacce.
