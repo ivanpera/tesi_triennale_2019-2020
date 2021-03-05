@@ -356,7 +356,7 @@
         \item un tipo per definire le proiezioni degli attributi del tipo User;
       \end{itemize}
       E così per ogni tipo da generare definito nello schema.
-    \section{Architettura del protipo}
+    \section{Architettura del prototipo}
       Una parte importante del processo di analisi è stata quella di comprendere la struttura del prototipo scritto dall'azienda: ad una prima fase di studio individuale è seguito un confronto diretto con il referente aziendale per chiarire eventuali dubbi.
       \paragraph*{}
       L'interazione con lo strato del database è gestita tramite il pattern di programmazione \emph{Data Access Object} (DAO).
@@ -461,7 +461,7 @@
     \paragraph*{}
       I database NoSQL non sono basati su tabelle rigidamente definite e associate fra di loro; esistono diversi tipi di schemi per database NoSQL fra cui quelli \emph{documentali}, a \emph{chiave-valore} e basati su \emph{grafi}.
       \paragraph*{}
-      In particolare, i database documentali contengono al loro interno \emph{documenti}, strutture dati tipicamente organizzate internamente come serie di chiavi-valori (ad esempio, implentando i formati JSON, XML o YAML).
+      In particolare, i database documentali contengono al loro interno \emph{documenti}, strutture dati tipicamente organizzate internamente come serie di chiavi-valori (ad esempio, implementando i formati JSON, XML o YAML).
       A differenza dei database relazionali, tutte le informazioni relative ad un documento sono all'interno della sua istanza e non distribuite fra più tabelle collegate tramite \emph{relazioni}.
       I database documentali (NoSQL, in generale) contengono principalmente dati di tipo non strutturato e i singoli record possono anche omettere completamente campi descritti nel loro schema.
       \begin{figure}[H]
@@ -790,7 +790,7 @@
         \begin{enumerate}
           \item in caso positivo, per ogni istanza di model nella tabella corrente si controlla se il dato passato come aggiornamento è un array;
           \begin{itemize}
-            \item nel caso lo sia, tutti i modelli associati al modello in esame tramite quel campo devono essere eliminati e sostiuiti con quelli in ingresso: gli id degli elementi da eliminare vengono salvati in una lista, poi vengono inseriti e associati gli elementi del nuovo array.
+            \item nel caso lo sia, tutti i modelli associati al modello in esame tramite quel campo devono essere eliminati e sostituiti con quelli in ingresso: gli id degli elementi da eliminare vengono salvati in una lista, poi vengono inseriti e associati gli elementi del nuovo array.
             \item altrimenti, se esistono, i model associati a quel campo sono da aggiornare ricorsivamente. Vengono salvati in una lista;
             \item in caso non esistano, vengono inseriti;
           \end{itemize}
@@ -1136,10 +1136,10 @@
       \section*{Risultati}
       In questa tesi sono stati raggiunti gli obiettivi di base concordati con l'azienda: sono state estese le opzioni di generazione di codice del prototipo aziendale rendendolo capace di generare modelli e DAO per un database SQL partendo da uno schema GraphQL.
       \paragraph*{}
-      È stata anche sviluppata una prima versione del DAO astratto utilizzante la librearia Sequelize, in grado di convertire le richieste in formato SQL.
+      È stata anche sviluppata una prima versione del DAO astratto, utilizzante la libreria Sequelize, in grado di convertire le richieste in formato SQL.
       Tutto il sistema è stato testato sugli stessi (o simili) test della versione originale, con qualche casistica rilevante aggiunta.
       \paragraph*{}
-        È stata data considerazione alle prestazioni, cercando di eseguire dove possibile meno operazioni di JOIN per le operazioni di lettura e, per quelle di scrittura, più operazioni di scrittura in blocco.
+        È stata data considerazione alle prestazioni cercando di minimizzare, dove possibile, il numero di operazioni di JOIN in lettura e massimizzare le scritture in blocco.
       \paragraph*{}
         La comunicazione con l'azienda è stata chiara e utile per dissipare eventuali dubbi sulla struttura del progetto o su certi aspetti di MongoDB, database del quale il sottoscritto non ha esperienza.
       \section*{Lavori futuri}
