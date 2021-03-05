@@ -56,7 +56,7 @@
         \item Non è mai stato definito o adottato un linguaggio di interrogazione e modifica unificato per i database documentali.
       \end{itemize}
     \paragraph*{}
-      Per questo, Facebook attorno al 2012 decise di iniziare a progettare e sviluppare \emph{GrapQL}, un linguaggio per API ideato per descrivere operazione di lettura e scrittura di dati.
+      Per questo, Facebook attorno al 2012 decise di iniziare a progettare e sviluppare \emph{GraphQL}, un linguaggio per API ideato per descrivere operazione di lettura e scrittura di dati.
     \paragraph*{}
       La spinta verso la definizione di questo linguaggio è stata data da alcune necessità derivate anche dalle limitazioni dei database documentali sopra indicate:
       \begin{itemize}
@@ -322,7 +322,7 @@
       \paragraph*{}
       Per aggiungere associazione con altre tabelle, i model possono invocare metodi chiamati allo stesso modo. Un esempio:
       \begin{Verbatim}[samepage=true]
-        //Definizione models
+        //Definizione model
         const A = sequelize.define('A', /* ... */);
         const B = sequelize.define('B', /* ... */);
         A.hasOne(B);
@@ -784,18 +784,21 @@
       \end{itemize} 
       Tutte e tre le funzioni ricevono anche in input un oggetto per definire gli aggiornamenti da scrivere.
       \paragraph*{}
-      L'operazione di aggiornamento con modelli associati non è correntemente supportata da Sequelize, quindi è stato implementato il seguente procedimento:
+      L'operazione di aggiornamento con modelli associati non è correntemente supportata da Sequelize, quindi è stato implementata una funzione ricorsiva che, dati in input i modelli da aggiornare e i cambiamenti da apportare, esegue il seguente procedimento:
       \begin{enumerate}
-        \item Viene eseguita un'operazione di ricerca per ottenere tutti i modelli da modificare in base al filtro passato alla funzione
-        \item Per ogni campo dell'oggetto che indica i cambiamenti, si controlla se il nome di questo campo corrisponde a quello di un'associazione
-        \item In caso positivo, per ogni modello da aggiornare, bisogna verificare se il campo di quel modello è un array
-        \begin{itemize}
-          \item Nel caso lo sia, l'array va sostituito completamente con quello passato in ingresso. Vengono quindi cancellati tutti i modelli associati con il modello preso in esame e
-          successivamente inseriti e associati nuovi modelli sulla base dei cambiamenti passati.
-          \item Altrimenti, se il campo non è vuoto, la funzione di aggiornamento viene richiamata ricorsivamente passando come parametri i cambiamenti sul campo corrente e il modello da aggiornare (sempre facendo caso al tipo di associazione rilevata)
-        \end{itemize}
-        \item Alla fine, vengono mappati tutti i modelli da aggiornare ai loro id, per poter eseguire un'unica operazione di aggiornamento in blocco sulla tabella sfruttando come filtro la lista di id, piuttosto che chiamare la funzione di aggiornamento per ogni modello (effettuando quindi n operazioni di update).
+        \item per ogni campo dell'oggetto che indica gli aggiornamenti, si controlla se il nome di questo campo corrisponde a quello di un'associazione;
+        \begin{enumerate}
+          \item in caso positivo, per ogni istanza di model nella tabella corrente si controlla se il dato passato come aggiornamento è un array;
+          \begin{itemize}
+            \item nel caso lo sia, tutti i modelli associati al modello in esame tramite quel campo devono essere eliminati e sostiuiti con quelli in ingresso: gli id degli elementi da eliminare vengono salvati in una lista, poi vengono inseriti e associati gli elementi del nuovo array.
+            \item altrimenti, se esistono, i model associati a quel campo sono da aggiornare ricorsivamente. Vengono salvati in una lista;
+            \item in caso non esistano, vengono inseriti;
+          \end{itemize}
+          \item viene eseguita l'eliminazione in blocco di tutti i model salvati nell'apposita lista, poi si richiama ricorsivamente la funzione di aggiornamento passando come parametri la lista dei modelli associati da aggiornare e i cambiamenti a loro relativi;
+        \end{enumerate}
+        \item alla fine, vengono mappati tutti i modelli da aggiornare ai loro id, per poter eseguire un'unica operazione di aggiornamento in blocco sulla tabella sfruttando come filtro la lista di id, piuttosto che chiamare la funzione di aggiornamento per ogni modello (effettuando quindi n operazioni di update);
       \end{enumerate}
+      I modelli passati alla prima invocazione della funzione sono ottenuti eseguendo un'operazione di ricerca.
     \subsection{Eliminazione}
       Le funzioni di eliminazione da implementare sono due:
       \begin{itemize}
@@ -812,7 +815,7 @@
       I DAO delle implementazioni poi si occuperanno di distruggere i record corretti sui modelli delle interfacce.
       \paragraph*{}
       La funzione delete dei model della libreria Sequelize accetta fra i parametri un filtro per indicare quali record andranno eliminati, ma non permette di includere nel filtro campi di altre tabelle (come nel caso della ricerca).
-      Nel caso dell'operazione deleteMany quindi, sarà prima necessario recuperare tutti i models da eliminare con una ricerca per poi mapparli sui loro id, così da rendere il filtro per l'operazione di delete corretto, lo stesso procedimento viene effettuato anche sulle interfacce.
+      Nel caso dell'operazione deleteMany quindi, sarà prima necessario recuperare tutti i model da eliminare con una ricerca per poi mapparli sui loro id, così da rendere il filtro per l'operazione di delete corretto, lo stesso procedimento viene effettuato anche sulle interfacce.
     \newpage
     \chapter{Sviluppo del generatore}
       Il sistema per la generazione dei modelli è stato suddiviso, seguendo la struttura già adottata dall'azienda, nei seguenti moduli:
@@ -910,7 +913,7 @@
           Questi test sono stati scritti per verificare il comportamento delle operazioni del DAO sia in caso di manipolazioni di dati di tipo semplice, sia in caso di tipi più complessi, come quelli elencati precedentemente.
           Vengono di seguito illustrati i casi più interessanti, anche per dimostrare il funzionamento del prodotto della tesi.
           \paragraph*{}
-          Gli esempi seguenti interagiranno con i DAO \emph{user}, \emph{user2} e \emph{subUser}: il primo definisce una interfaccia con gli attributi \emph{firstName, a, b}, il secondo ha l'attributo \emph{firstName2} mentre subUser è un tipo che implementa le due interfacce e aggiunge l'attributo \emph{subAttr}.
+          Gli esempi seguenti interagiranno con i DAO \emph{user}, \emph{user2} e \emph{subUser}: il primo definisce una interfaccia con gli attributi \emph{firstName}, \emph{a} e \emph{b}, il secondo ha l'attributo \emph{firstName2} mentre subUser è un tipo che implementa le due interfacce e aggiunge l'attributo \emph{subAttr}.
           \begin{Verbatim}[samepage=true]
             type User = {
                 id?: Scalars['ID'];
@@ -981,7 +984,7 @@
               expect(subUser!.id).toBe(user!.id);
               expect(subUser!.subAttrib).toBe("subAttr");
             \end{Verbatim}
-            Si chiama il metodo di inserimento di un DAO di tipo sottoclasse (ovvero un tipo che implementa un'interfaccia). Si verifica successivamente che sia possibile recuperare lo stesso record inserito sia interrogando il DAO dell'interfaccia che quello dell'implementazione. La prova di uguaglianza fra il record ottenuto dal DAO
+            Si chiama il metodo di inserimento del DAO di SubUser. Si verifica successivamente che sia possibile recuperare lo stesso record inserito sia interrogando il DAO dell'interfaccia che quello dell'implementazione. La prova di uguaglianza fra il record ottenuto dal DAO
             dell'interfaccia e quello dell'implementazione viene fatta su una serie di attributi, fra cui l'ID.
           \paragraph{Classe con più interfacce}
             \begin{Verbatim}
@@ -997,11 +1000,11 @@
               expect(su.id).toBe(u?.id);
               expect(su.id).toBe(u2?.id);
             \end{Verbatim}
-            Viene inserito un record, tramite il DAO di una sottoclasse, che implementa più di una interfaccia. Successivamente si controlla che interrogare il DAO utilizzato o quello delle sue interfacce porti a recuperare lo stesso record.
+            Viene inserito un record tramite il DAO di SubUser, che implementa più di una interfaccia. Successivamente si controlla che interrogare il DAO utilizzato o quello delle sue interfacce porti a recuperare lo stesso record.
         \subsection{Aggiornamento}
           \paragraph{Aggiornamento di entità innestate}
             \begin{Verbatim}
-              \\[...] inserimento records
+              \\[...] inserimento record
               dao.user.updateMany({
                                    "a.d.d" : "D",      //Filtro
                                    "a.d.e" : null
@@ -1022,7 +1025,7 @@
                                           })
               expect(numUpdated).toBe(2)
             \end{Verbatim}
-            Vengono inseriti dei records con oggetti innestati e array e poi, sempre sullo lo stesso DAO dell'inserimento, viene chiamata la funzione di aggiornamento, indicando che si vogliono aggiornare solo alcuni dei record aggiunti utilizzando il parametro di tipo filtro.
+            Vengono inseriti dei record con oggetti innestati e array e poi, sempre sullo lo stesso DAO dell'inserimento, viene chiamata la funzione di aggiornamento, indicando che si vogliono aggiornare solo alcuni dei record aggiunti utilizzando il parametro di tipo filtro.
             I cambiamenti indicati vanno a definire aggiornamenti sia su array che su oggetti, incluso l'aggiornamento di parametri di oggetti innestati dentro oggetti innestati.
             Successivamente si contano i record che sono stati correttamente aggiornati.
           \paragraph{Aggiornamento di sottoclassi}
@@ -1038,7 +1041,7 @@
               expect(user2!.firstName).toBe("FirstName1");
               expect(user2!.subAttrib).toBe("subAttrib");
             \end{Verbatim}
-            Viene inserito un record di tipo "sottoclasse" e poi lo si aggiorna.
+            Viene inserito un record di tipo SubUser e poi lo si aggiorna.
             Fra i campi aggiornati ce ne sono anche di appartenenti all'interfaccia implementata dal record.
         \subsection{Sostituzione}
           \paragraph{Sostituzione di superclasse con sottoclassi}
@@ -1063,9 +1066,8 @@
                   fail("Replaced user is not of expected subclass.")
               }
             \end{Verbatim}
-            Viene inserito un record tramite il DAO della superclasse, poi sostituito con un oggetto di tipo "sottoclasse1".
-            Dopodiché, tramite una ricerca per ID, si accede al nuovo record e ne si controlla il tipo, che deve quindi essere diventato "sottoclasse1".
-            Si sostituisce nuovamente il nuovo record con uno di tipo "sottoclasse2" e si ripete la prova.
+            Viene inserito un record tramite il DAO della superclasse, poi sostituito con un oggetto di tipo SubUser.
+            Dopodiché, tramite una ricerca per ID, si accede al nuovo record e ne si controlla il tipo, che deve quindi essere diventato quello di SubUser.
         \subsection{Eliminazione}
           \paragraph{Eliminazione di classe con più superclassi}
             \begin{Verbatim}
@@ -1074,16 +1076,16 @@
                                     firstName2 : "fname2",
                                     subAttrib : "subAttr"
                                    }
-              \\[...] inserimento records
+              \\[...] inserimento record
               await dao.subUser.deleteMany({
                                             firstName : "subName",
                                             subAttrib : "subAttr"
                                            })
               expect(await dao.user2.count({})).toBe(0)
             \end{Verbatim}
-            Vengono inseriti records di tipo "sottoclasse1" (che implementa due interfacce) e successivamente li si eliminano chiamando la funzione di eliminazione sul DAO di "sottoclasse1".
+            Vengono inseriti record di tipo SubUser e successivamente li si eliminano chiamando la funzione di eliminazione sullo stesso DAO.
             Fra i parametri del filtro di eliminazione sono inseriti anche attributi appartenenti ad una delle due interfacce.
-            Si verifica poi, tramite una ricerca sul dao della seconda interfaccia, che siano stati correttamente eliminati tutti i records.
+            Si verifica poi, tramite una ricerca sul dao della seconda interfaccia, che siano stati correttamente eliminati tutti i record.
       \section{Limiti dell'implementazione proposta}
         Le associazioni salvate nella lista "sequelizeAssociations" di un Dao sono identificate solo tramite il nome di un campo, pertanto non è possibile gestire il caso in cui un DAO abbia più relazioni basate su campi con lo stesso nome.
         È questo per esempio il caso di una interfaccia implementata da due implementazioni (o viceversa) che condividono un campo dal nome uguale ma non presente nell'interfaccia: il DAO dell'interfaccia potrà avere una sola sequelizeAssociation basata sul campo condiviso dalle due interfacce.
@@ -1127,22 +1129,25 @@
         \paragraph*{}
         I tipi TypeScript generati dal plugin ufficiale di GraphQL-codegen hanno un campo nominato "__typeName", contente il nome del tipo concreto (quindi non delle interfacce), con il quale si potrebbe risolvere il problema.
         Nella configurazione usata dall'azienda però questo campo è reso opzionale, pertanto un utente potrebbe inserire un record senza specificare il tipo dell'oggetto passato in input.
+        \paragraph*{}
+        Dopo averne discusso con il referente aziendale, questi limiti non sono stati ritenuti particolarmente preoccupanti, in quanto sono state rilevate problematiche simili anche per la versione MongoDB.
     \newpage
     \chapter{Conclusioni}
       \section*{Risultati}
-      In questa tesi sono stati raggiunti gli obiettivi base del lavoro: sono stati implementati sia il DAO astratto in grado di comunicare, tramite libreria Sequelize, con lo strato del DB, che il plugin per la generazione di DAO, compresi filtri, proiezioni, ordinamenti e Modelli, implementanti il DAO astratto.
+      In questa tesi sono stati raggiunti gli obiettivi di base concordati con l'azienda: sono state estese le opzioni di generazione di codice del prototipo aziendale rendendolo capace di generare modelli e DAO per un database SQL partendo da uno schema GraphQL.
+      \paragraph*{}
+      È stata anche sviluppata una prima versione del DAO astratto, in grado di convertire le richieste in formato SQL.
+      Tutto il sistema è stato testato sugli stessi (o simili) test della versione originale, con qualche casistica rilevante aggiunta.
       \paragraph*{}
         È stata data considerazione alle prestazioni, cercando di eseguire dove possibile meno operazioni di JOIN per le operazioni di lettura e, per quelle di scrittura, più operazioni di scrittura in blocco.
       \paragraph*{}
         La comunicazione con l'azienda è stata chiara e utile per dissipare eventuali dubbi sulla struttura del progetto o su certi aspetti di MongoDB, database del quale il sottoscritto non ha esperienza.
-      \paragraph*{}
-        I limiti della soluzione già evidenziati non sono stati ritenuti particolarmente preoccupanti, in quanto sono state rilevate problematiche in casi simili anche per la versione MongoDB.
       \section*{Lavori futuri}
         Oltre ad un supporto continuato (tutto il progetto, comprese le interfacce del DAO, è ancora in fase prototipale), una funzionalità immediatamente aggiungibile sarebbe quella di poter far scegliere, in fase di generazione, come trattare le gerarchie di interfacce e implementazioni.
-        Correntemente è possibile gestire le gerarchie solo nel modo descritto nei capitoli precedenti, ma l'azienda sarebbe interessata a poter gestire le gerarchie anche negli altri due modi rimanenti:
+        Correntemente è possibile gestire le gerarchie solo nel modo descritto nei capitoli precedenti, ma l'azienda sarebbe interessata a poter gestire le gerarchie anche nelle altre due modalità rimanenti:
         \begin{itemize}
-          \item Accorpando tutte le implementazioni nella tabella dell'interfaccia
-          \item Generando solo le tabelle delle implementazioni, ognuna contenente anche i campi delle interfacce
+          \item accorpando tutte le implementazioni nella tabella dell'interfaccia;
+          \item generando solo le tabelle delle implementazioni, ognuna contenente anche i campi delle interfacce;
         \end{itemize}
     \newpage
     \begin{thebibliography}{3}
