@@ -39,27 +39,23 @@
     \section{Introduzione}
         \begin{frame}
             \frametitle{Twinlogix}
-            \emph{Twinlogix S.r.l}, azienda di Santarcangelo di Romagna, ha seguito con interesse la maturazione dello standard GraphQL ed
-            in questo momento sta ponendo fra gli obiettivi interni il passaggio completo da API Rest a GraphQL.
+            \emph{Twinlogix S.r.l}, azienda di Santarcangelo di Romagna, ha post fra gli obiettivi interni il passaggio completo da API Rest a GraphQL.
             \vfill
-            Un altro progetto legato a questo è quello di sfruttare le potenzialità del linguaggio GraphQL per costruire strumenti di generazione di codice basati su di esso.
-            Questi strumenti, basandosi su uno schema GraphQL, dovranno generare definizioni di modelli per database e relativi DAO.
+            Sta anche pensando di sfruttare le potenzialità del linguaggio GraphQL per costruire strumenti di generazione di codice basati su di esso.
             \vfill
-            Dato che un prototipo di generatore (per database MongoDB) è stato già scritto dall'azienda, l'obiettivo di questa tesi sarà studiare ed implementarne una versione per database SQL.
+            L'obiettivo di questa tesi sarà studiare ed implementare una versione del generatore per database SQL.
         \end{frame}
     \section{GraphQL}
         \subsection{Storia}
             \begin{frame}
                 \frametitle{GraphQL}
                 È un linguaggio per API ideato per descrivere operazione di lettura e scrittura di dati definito da Facebook nel 2012 ed dal 2018 diventato standard gestito da \emph{GraphQL Foundation}.
-                La sua nascita è dovuta a delle necessità dell'azienda statunitense.
                 \begin{itemize}
                     \item i dati gestiti da Facebook come post, utenti, commenti e reazioni risultano meglio rappresentabili da database non relazionali;
-                    \item allo stesso tempo, il valore di questi dati risiede nelle relazioni fra di essi (adesempio, quali utenti sono amici di altri).
+                    \item allo stesso tempo, il valore di questi dati risiede nelle relazioni fra di essi (adesempio, quali utenti sono amici di altri);
+                    \item i database relazionali (in questo caso, documentali) non presentano nativamente meccanismi di relazione fra documenti diversi;
+                    \item non esiste un linguaggio di querying unificato per database NoSQL.
                 \end{itemize}
-                \vfill
-                I database relazionali (in questo caso, documentali) non presentano nativamente meccanismi di relazione fra documenti diversi.
-                Non esiste un linguaggio di querying unificato per database NoSQL.
             \end{frame}
 
         \subsection{Caratteristiche}
@@ -83,17 +79,8 @@
     \section{Progetto}
         \subsection{Architettura}
             \begin{frame}
-                \frametitle{Architettura del progetto}
-                \begin{figure}
-                    \includegraphics[scale=0.26]{../prototype-architecture.png}
-                \end{figure}
-                Per gestire l'interazione con le entità generate l'azienda ha impiegato il pattern \emph{Data Access Object}, definendo un DAO generico.
-                \vfill
-                Le implementazioni astratte di questo DAO si occupano di effettuare le operazioni su Database, interfacciandosi con driver e librerie apposite.
-            \end{frame}
-
-            \begin{frame}
                 \begin{columns}
+                    \frametitle{Architettura del progetto}
                     \column{0.4\textwidth}
                         Per la generazione del codice è stato scritto un plugin per l'applicativo \emph{GraphQL code generator} composto da:
                         \begin{itemize}
@@ -107,6 +94,15 @@
                             \includegraphics[scale=0.2]{../generator_workflow.png}
                         \end{figure}
                 \end{columns}
+            \end{frame}
+
+            \begin{frame}
+                \begin{figure}
+                    \includegraphics[scale=0.26]{../prototype-architecture.png}
+                \end{figure}
+                Per gestire l'interazione con le entità generate l'azienda ha impiegato il pattern \emph{Data Access Object}, definendo un DAO generico.
+                \vfill
+                Le implementazioni astratte di questo DAO si occupano di effettuare le operazioni su Database, interfacciandosi con driver e librerie apposite.
             \end{frame}
 
         \subsection{Obiettivi}
@@ -141,9 +137,8 @@
                         \includegraphics[scale=0.24]{../db-example.jpg}
                     \end{figure}
                 \end{columns}
-                I campi di tipi embedded vengono mappati in tabelle secondarie, con riferimenti alle tabelle di appartenenza. Gli array vengono gestiti tramite associazioni "uno a molti": per array di scalari, vengono create tabelle apposite per contenerne i valori.
                 \vfill
-                Per i tipi implementanti interfacce vengono tenuti tutti i campi comuni nella tabella dell'interfaccia. 
+                Le entità composte o implementanti interfacce sono gestite tenendo i campi comuni nelle tabelle delle interfacce e creando tabelle secondarie per array e tipi embedded.
             \end{frame}
 
             \begin{frame}
@@ -159,7 +154,7 @@
 
             \begin{frame}
                 Se durante una operazione vengono rilevati campi appartenenti ad una associazione, la gestione dell'operazione su quei campi
-                è delegata ai DAO di compentenza.
+                è delegata ai DAO di competenza.
                 \begin{figure}
                     \includegraphics[scale=.5]{Resolution_Example.png}
                     \caption{Struttura tipo dei metodi del DAO}
